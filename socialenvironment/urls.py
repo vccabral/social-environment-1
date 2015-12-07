@@ -6,12 +6,12 @@ from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 
-from home.models import RawDataMap, DataPoint
+from home.models import RawDataMap, DataPoint, ToxicDataPoint, AirQualityDataPoint
 
-class RawDataMapAdmin(admin.ModelAdmin):
-    pass
-
-admin.site.register(RawDataMap, RawDataMapAdmin)
+admin.site.register(RawDataMap)
+admin.site.register(DataPoint)
+admin.site.register(ToxicDataPoint)
+admin.site.register(AirQualityDataPoint)
 
 urlpatterns = [
     url(r'^django-admin/', include(admin.site.urls)),
