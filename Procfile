@@ -1,1 +1,1 @@
-web: python manage.py runserver 0.0.0.0:80 --log-file -
+web: gunicorn socialenvironment.wsgi --log-file -
