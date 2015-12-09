@@ -95,6 +95,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print("import raw data")
+        temp_dir = "/tmp/"
 
         connection.text_factory = lambda x: unicode(x, "utf-8", "ignore")
         DataPoint.objects.all().delete()
@@ -104,7 +105,7 @@ class Command(BaseCommand):
         for year in range(1987, 2014):
             filename = "US_"+str(year)+"_v13.zip"
             download_url = "http://www3.epa.gov/tri/"+filename
-            tmp_path = "./tmp/"
+            tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
@@ -115,7 +116,7 @@ class Command(BaseCommand):
         for year in range(1987, 2014):
             filename = "US_"+str(year)+"_v13.zip"
             download_url = "http://www3.epa.gov/tri/"+filename
-            tmp_path = "./tmp/"
+            tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
@@ -126,7 +127,7 @@ class Command(BaseCommand):
         for year in range(1990, 2016):
             filename = "annual_all_"+str(year)+".zip"
             download_url = "http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/"+filename  
-            tmp_path = "./tmp/"
+            tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
@@ -137,7 +138,7 @@ class Command(BaseCommand):
         for year in range(1990, 2016):
             filename = "annual_all_"+str(year)+".zip"
             download_url = "http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/"+filename  
-            tmp_path = "./tmp/"
+            tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
@@ -149,7 +150,7 @@ class Command(BaseCommand):
         for year in range(1987, 2014):
             filename = "US_"+str(year)+"_v13.zip"
             download_url = "http://www3.epa.gov/tri/"+filename
-            tmp_path = "./tmp/"
+            tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
@@ -418,7 +419,7 @@ class Command(BaseCommand):
         for year in range(1990, 2016):
             filename = "annual_all_"+str(year)+".zip"
             download_url = "http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/"+filename  
-            tmp_path = "./tmp/"
+            tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
