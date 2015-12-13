@@ -9,91 +9,11 @@ def encode_for_database(local_string):
     return unicode(local_string, errors='ignore') 
 
 
-# class ImportTool(object):
-
-#     def __init__(self, tag, download_url_pattern, year_range, unzipped_file_name_pattern, tmp_path):
-#         self.download_url_pattern = download_url_pattern 
-#         self.year_range = year_range
-#         self.tmp_path = tmp_path
-#         self.tag = tag
-
-#     def run(self):
-#         for year in self.year_range:
-#             file_url = download_url_pattern.format({"year": year})
-#             self.download_file(file_url)
-#             self.unzip_file(file_url)
-
-#         for year in self.year_range:
-#             local_file = unzipped_file_name_pattern.format({"year": year})
-#             self.import_into_database(local_file)
-
-#     def download_file(self, file_url):
-#         filename = file_url.split("/")[-1]
-#         file_path = self.tmp_path+filename
-
-#         if not os.path.isfile(file_path):
-#             urllib.urlretrieve(file_url, file_path)
-
-#     def unzip_file(self, file_url):
-#         filename = file_url.split("/")[-1]
-#         file_path = self.tmp_path+filename
-#         if os.path.isfile(file_path):
-#             with zipfile.ZipFile(file_path, "r") as z:
-#                 z.extractall(self.tmp_path)
-
-#     def save_columns_to_database(self, columns):
-#         raise NotImplementedError
-
-#     def error_occured_during_save(self, columns):
-#         raise NotImplementedError
-
-
-#     def save_column_map_data(self, tag, column):
-#         if not RawDataMap.objects.filter(import_id=tag, identifier=column).exists():
-#             RawDataMap(import_id=tag, identifier=column).save()
-
-
-#     def import_into_database(self, local_file):
-#         if os.path.isfile(local_file):
-#             with open(local_file, 'r') as f:
-#                 is_first_line = True
-#                 index_to_column = {}
-#                 counter = 0
-#                 for line in f: 
-#                     counter = counter + 1
-#                     if counter % 1000 == 0:
-#                         print(counter)
-#                     columns = line.split("\t")
-#                     if is_first_line:
-#                         for column_index, column in enumerate(columns):
-#                             index_to_column[column_index] = column
-#                             self.save_column_map_data(self.tag, column)
-#                         is_first_line = False
-#                     else:
-#                         try:
-#                             self.save_columns_to_database(columns)
-#                         except:
-#                             self.error_occured_during_save()
-
-
-# class ToxicDataImportTool(ImportTool):
-#     def save_columns_to_database(self, columns):
-#         raise NotImplementedError
-
-#     def error_occured_during_save(self, columns):
-#         raise NotImplementedError
-
-# class AirQualityDataImportTool(ImportTool):
-#     def save_columns_to_database(self, columns):
-#         raise NotImplementedError
-
-#     def error_occured_during_save(self, columns):
-#         raise NotImplementedError
-
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
 
     def handle(self, *args, **options):
+
         print("import raw data")
         temp_dir = "/tmp/"
 
