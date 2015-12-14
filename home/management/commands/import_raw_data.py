@@ -3,73 +3,98 @@ from django.db import connection
 import os.path
 import zipfile
 import urllib
+import sys
 from home.models import RawDataMap, DataPoint, ToxicDataPoint, AirQualityDataPoint
 
 def encode_for_database(local_string):
-    if local_string.startswith("\"") and local_string.endswit("\""):
+    if local_string.startswith("\"") and local_string.endswith("\""):
         local_string = local_string[1:-1]
+    elif local_string.startswith("\"") and local_string.endswith("\"\n"):
+        local_string = local_string[1:-2]
     return unicode(local_string, errors='ignore') 
 
 
 class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
+    help = 'Helps import data from EPA sources'
+
+
+    def add_arguments(self, parser):
+        parser.add_argument('year_start', nargs='+', type=int)
+        parser.add_argument('year_end', nargs='+', type=int)
+        parser.add_argument('--redo',
+            action='store_true',
+            dest='redo',
+            default=False,
+            help='Ignore current files')
+
+    def get_year_range(self, start, end):
+        return range(start, end+1)
 
     def handle(self, *args, **options):
 
         print("import raw data")
+        years_range = self.get_year_range(options['year_start'][0], options['year_end'][0])
+        redo_all = options['redo']
         temp_dir = "/tmp/"
 
         connection.text_factory = lambda x: unicode(x, "utf-8", "ignore")
-        DataPoint.objects.all().delete()
-        ToxicDataPoint.objects.all().delete()
-        AirQualityDataPoint.objects.all().delete()
+        if redo_all:
+            for year in years_range:
+                ToxicDataPoint.objects.filter(REPORTING_YEAR=year).delete()
+                AirQualityDataPoint.objects.filter(Year=year).delete()
+            print("deleted all existing data points.")
 
-        for year in range(1987, 2014):
+        for year in years_range:
             filename = "US_"+str(year)+"_v13.zip"
             download_url = "http://www3.epa.gov/tri/"+filename
             tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
-            if not os.path.isfile(file_path):
+            if not os.path.isfile(file_path) or redo_all:
                 urllib.urlretrieve(download_url, file_path)
                 print("downloaded: "+file_path)
+            print("completed download: "+file_path)
 
-        for year in range(1987, 2014):
+
+        for year in years_range:
             filename = "US_"+str(year)+"_v13.zip"
             download_url = "http://www3.epa.gov/tri/"+filename
             tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
-            if os.path.isfile(file_path):
+            if os.path.isfile(file_path) or redo_all:
                 with zipfile.ZipFile(file_path, "r") as z:
                     z.extractall(tmp_path)
+            print("completed extract: "+file_path)
 
-        for year in range(1990, 2016):
+        for year in years_range:
             filename = "annual_all_"+str(year)+".zip"
             download_url = "http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/"+filename  
             tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
-            if not os.path.isfile(file_path):
+            if not os.path.isfile(file_path) or redo_all:
                 urllib.urlretrieve(download_url, file_path)
                 print("downloaded: "+file_path)
+            print("completed download: "+file_path)
 
-        for year in range(1990, 2016):
+        for year in years_range:
             filename = "annual_all_"+str(year)+".zip"
             download_url = "http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/"+filename  
             tmp_path = temp_dir
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
-            if os.path.isfile(file_path):
+            if os.path.isfile(file_path) or redo_all:
                 with zipfile.ZipFile(file_path, "r") as z:
                     z.extractall(tmp_path)
+            print("completed extract: "+file_path)
 
 
-        for year in range(1987, 2014):
+        for year in years_range:
             filename = "US_"+str(year)+"_v13.zip"
             download_url = "http://www3.epa.gov/tri/"+filename
             tmp_path = temp_dir
@@ -78,7 +103,7 @@ class Command(BaseCommand):
 
             print("working on ", unzipped_file_path)
 
-            if os.path.isfile(unzipped_file_path):
+            if os.path.isfile(unzipped_file_path) or redo_all:
                 with open(unzipped_file_path, 'r') as f:
                     is_first_line = True
                     index_to_column = {}
@@ -334,11 +359,15 @@ class Command(BaseCommand):
                                     METAL_INDICATOR = encode_for_database(columns[234])
                                 ).save()
                             except:
-                                print("toxic release")
                                 print("couldn't add: ", columns)
+                                print(sys.exc_info()[0])
+                                print(dir(sys.exc_info()[0]))
+                                print(sys.exc_info()[0].message)
+                                print(dir(sys.exc_info()[0].message))
+
                 print("finished", unzipped_file_path)
 
-        for year in range(1990, 2016):
+        for year in years_range:
             filename = "annual_all_"+str(year)+".zip"
             download_url = "http://aqsdr1.epa.gov/aqsweb/aqstmp/airdata/"+filename  
             tmp_path = temp_dir
@@ -347,7 +376,7 @@ class Command(BaseCommand):
 
             print("working on ", unzipped_file_path)
 
-            if os.path.isfile(unzipped_file_path):
+            if os.path.isfile(unzipped_file_path) or redo_all:
                 with open(unzipped_file_path, 'r') as f:
                     is_first_line = True
                     index_to_column = {}
@@ -424,4 +453,7 @@ class Command(BaseCommand):
                                 ).save()
                             except:
                                 print("couldn't add: ", columns)
-
+                                print(sys.exc_info()[0])
+                                print(dir(sys.exc_info()[0]))
+                                print(sys.exc_info()[0].message)
+                                print(dir(sys.exc_info()[0].message))
