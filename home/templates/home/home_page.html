@@ -34,7 +34,7 @@ html, body, #map {
 var map;
 var markers;
 var current_url = window.location.href;
-var arr = url.split("/");
+var arr = current_url.split("/");
 var base_url = arr[0] + "//" + arr[2];
 
 var load_air_quality = function(bounds, load_func){
