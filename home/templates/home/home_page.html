@@ -38,22 +38,6 @@ var arr = current_url.split("/");
 var base_url = arr[0] + "//" + arr[2];
 console.log(base_url);
 
-var load_air_quality = function(bounds, load_func){
-	var url = base_url;
-	url = url + '/api/v1/airquality/?';
-	url = url + 'min_latitude='+sw.lat+'&max_latitude='+ne.lat+"&";
-	url = url + 'min_longitude='+ne.lng+'&max_longitude='+sw.lng;
-	$.ajax(url)
-	.done(function(data){
-		var data_set = data.results;
-		for(var lcv=0;lcv<data_set.length;lcv++){
-			var data_point = data_set[lcv];
-			var marker = L.marker([data_point.Latitude, data_point.Longitude]);
-			markers.addLayer(marker);
-		}
-		console.log("added ", data.results.length, "objects to map");
-	});
-};
 var load_air_quality_to_map = function(bounds){
 	var ne = bounds._northEast;
 	var sw = bounds._southWest;
@@ -76,7 +60,7 @@ var load_air_quality_to_map = function(bounds){
 var load_toxic_to_map = function(bounds){
 	var ne = bounds._northEast;
 	var sw = bounds._southWest;
-	var url = 'http://localhost:8000';
+	var url = base_url;
 	url = url + '/api/v1/toxic/?';
 	url = url + 'min_latitude='+sw.lat+'&max_latitude='+ne.lat+"&";
 	url = url + 'min_longitude='+ne.lng+'&max_longitude='+sw.lng;
