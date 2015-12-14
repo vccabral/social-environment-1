@@ -5,8 +5,8 @@ from django.contrib import admin
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
-
 from home.models import RawDataMap, DataPoint, ToxicDataPoint, AirQualityDataPoint
+from home.views import router
 
 admin.site.register(RawDataMap)
 admin.site.register(DataPoint)
@@ -21,6 +21,7 @@ urlpatterns = [
 
     url(r'^search/$', 'search.views.search', name='search'),
 
+    url(r'^api/v1/', include(router.urls)),
     url(r'', include(wagtail_urls)),
 ]
 

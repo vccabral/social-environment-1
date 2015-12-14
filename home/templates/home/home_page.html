@@ -26,9 +26,46 @@ html, body, #map {
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 <script>
 var map;
+var load_air_quality_to_map = function(bounds){
+	var ne = bounds._northEast;
+	var sw = bounds._southWest;
+	var url = 'http://localhost:8000';
+	url = url + '/api/v1/airquality/?';
+	url = url + 'min_latitude='+sw.lat+'&max_latitude='+ne.lat+"&";
+	url = url + 'min_longitude='+ne.lng+'&max_longitude='+sw.lng;
+	$.ajax(url)
+	.done(function(data){
+		var data_set = data.results;
+		for(var lcv=0;lcv<data_set.length;lcv++){
+			var data_point = data_set[lcv];
+			var marker = L.marker([data_point.Latitude, data_point.Longitude]).addTo(map);
+		}
+		console.log("added ", data.results.length, "objects to map");
+	});
+};
+
+var load_toxic_to_map = function(bounds){
+	var ne = bounds._northEast;
+	var sw = bounds._southWest;
+	var url = 'http://localhost:8000';
+	url = url + '/api/v1/toxic/?';
+	url = url + 'min_latitude='+sw.lat+'&max_latitude='+ne.lat+"&";
+	url = url + 'min_longitude='+ne.lng+'&max_longitude='+sw.lng;
+	$.ajax(url)
+	.done(function(data){
+		var data_set = data.results;
+		for(var lcv=0;lcv<data_set.length;lcv++){
+			var data_point = data_set[lcv];
+			var marker = L.marker([data_point.LATITUDE, data_point.LONGITUDE]).addTo(map);
+		}
+		console.log("added ", data.results.length, "objects to map");
+	});
+
+};
 var initializeMap = function(position){
 	map = L.map('map').setView([position.coords.latitude, position.coords.longitude], 13);
 
@@ -44,6 +81,13 @@ var initializeMap = function(position){
 		{"title": "Me"}
 
 	).addTo(map);
+
+	map.on('moveend', function(e){
+		var bounds = map.getBounds();
+		load_air_quality_to_map(bounds);
+		load_toxic_to_map(bounds);
+	});
+
 }
 
 var initialPosition = {

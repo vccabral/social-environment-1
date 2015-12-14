@@ -6,6 +6,8 @@ import urllib
 from home.models import RawDataMap, DataPoint, ToxicDataPoint, AirQualityDataPoint
 
 def encode_for_database(local_string):
+    if local_string.startswith("\"") and local_string.endswit("\""):
+        local_string = local_string[1:-1]
     return unicode(local_string, errors='ignore') 
 
 
