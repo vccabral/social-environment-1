@@ -35,7 +35,7 @@ var map;
 var markers;
 
 var load_air_quality = function(bounds, load_func){
-	var url = 'http://localhost:8000';
+	var url = '';
 	url = url + '/api/v1/airquality/?';
 	url = url + 'min_latitude='+sw.lat+'&max_latitude='+ne.lat+"&";
 	url = url + 'min_longitude='+ne.lng+'&max_longitude='+sw.lng;
@@ -53,7 +53,7 @@ var load_air_quality = function(bounds, load_func){
 var load_air_quality_to_map = function(bounds){
 	var ne = bounds._northEast;
 	var sw = bounds._southWest;
-	var url = 'http://localhost:8000';
+	var url = '';
 	url = url + '/api/v1/airquality/?';
 	url = url + 'min_latitude='+sw.lat+'&max_latitude='+ne.lat+"&";
 	url = url + 'min_longitude='+ne.lng+'&max_longitude='+sw.lng;
