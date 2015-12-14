@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block body_class %}template-homepage{% endblock %}
 
@@ -28,8 +29,27 @@ html, body, #map {
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script src="{% static 'js/leaflet.markercluster-src.js' %}"></script>
 <script>
 var map;
+var markers;
+
+var load_air_quality = function(bounds, load_func){
+	var url = 'http://localhost:8000';
+	url = url + '/api/v1/airquality/?';
+	url = url + 'min_latitude='+sw.lat+'&max_latitude='+ne.lat+"&";
+	url = url + 'min_longitude='+ne.lng+'&max_longitude='+sw.lng;
+	$.ajax(url)
+	.done(function(data){
+		var data_set = data.results;
+		for(var lcv=0;lcv<data_set.length;lcv++){
+			var data_point = data_set[lcv];
+			var marker = L.marker([data_point.Latitude, data_point.Longitude]);
+			markers.addLayer(marker);
+		}
+		console.log("added ", data.results.length, "objects to map");
+	});
+};
 var load_air_quality_to_map = function(bounds){
 	var ne = bounds._northEast;
 	var sw = bounds._southWest;
@@ -42,7 +62,8 @@ var load_air_quality_to_map = function(bounds){
 		var data_set = data.results;
 		for(var lcv=0;lcv<data_set.length;lcv++){
 			var data_point = data_set[lcv];
-			var marker = L.marker([data_point.Latitude, data_point.Longitude]).addTo(map);
+			var marker = L.marker([data_point.Latitude, data_point.Longitude]);
+			markers.addLayer(marker);
 		}
 		console.log("added ", data.results.length, "objects to map");
 	});
@@ -60,7 +81,8 @@ var load_toxic_to_map = function(bounds){
 		var data_set = data.results;
 		for(var lcv=0;lcv<data_set.length;lcv++){
 			var data_point = data_set[lcv];
-			var marker = L.marker([data_point.LATITUDE, data_point.LONGITUDE]).addTo(map);
+			var marker = L.marker([data_point.LATITUDE, data_point.LONGITUDE]);
+			markers.addLayer(marker);
 		}
 		console.log("added ", data.results.length, "objects to map");
 	});
@@ -81,6 +103,22 @@ var initializeMap = function(position){
 		{"title": "Me"}
 
 	).addTo(map);
+
+	markers = L.markerClusterGroup({
+		maxClusterRadius: 120,
+		iconCreateFunction: function (cluster) {
+			var markers = cluster.getAllChildMarkers();
+			var n = 0;
+			for (var i = 0; i < markers.length; i++) {
+				n += markers[i].number;
+			}
+			return L.divIcon({ html: n, className: 'mycluster', iconSize: L.point(40, 40) });
+		},
+		//Disable all of the defaults:
+		spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false
+	});
+	markers.addTo(map);
+
 
 	map.on('moveend', function(e){
 		var bounds = map.getBounds();
