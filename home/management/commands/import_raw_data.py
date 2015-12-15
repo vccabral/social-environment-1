@@ -64,7 +64,7 @@ class Command(BaseCommand):
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
-            if os.path.isfile(file_path) or redo_all:
+            if os.path.isfile(file_path) and redo_all:
                 with zipfile.ZipFile(file_path, "r") as z:
                     z.extractall(tmp_path)
             print("completed extract: "+file_path)
@@ -88,7 +88,7 @@ class Command(BaseCommand):
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
-            if os.path.isfile(file_path) or redo_all:
+            if os.path.isfile(file_path) and redo_all:
                 with zipfile.ZipFile(file_path, "r") as z:
                     z.extractall(tmp_path)
             print("completed extract: "+file_path)
@@ -103,7 +103,7 @@ class Command(BaseCommand):
 
             print("working on ", unzipped_file_path)
 
-            if os.path.isfile(unzipped_file_path) or redo_all:
+            if os.path.isfile(unzipped_file_path) and redo_all:
                 with open(unzipped_file_path, 'r') as f:
                     is_first_line = True
                     index_to_column = {}
@@ -376,7 +376,7 @@ class Command(BaseCommand):
 
             print("working on ", unzipped_file_path)
 
-            if os.path.isfile(unzipped_file_path) or redo_all:
+            if os.path.isfile(unzipped_file_path) and redo_all:
                 with open(unzipped_file_path, 'r') as f:
                     is_first_line = True
                     index_to_column = {}
