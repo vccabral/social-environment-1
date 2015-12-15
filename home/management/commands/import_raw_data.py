@@ -21,28 +21,50 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('year_start', nargs='+', type=int)
         parser.add_argument('year_end', nargs='+', type=int)
+        parser.add_argument('--download',
+            action='store_true',
+            dest='download',
+            default=False,
+            help='Force new download?')
         parser.add_argument('--redo',
             action='store_true',
             dest='redo',
             default=False,
             help='Ignore current files')
+        parser.add_argument('--toxic',
+            action='store_true',
+            dest='import_toxic',
+            default=False,
+            help='Import toxic data?')
+        parser.add_argument('--air',
+            action='store_true',
+            dest='import_air',
+            default=False,
+            help='Import air data?')
 
     def get_year_range(self, start, end):
         return range(start, end+1)
 
     def handle(self, *args, **options):
+        max_insert_quantity = 10000
 
         print("import raw data")
         years_range = self.get_year_range(options['year_start'][0], options['year_end'][0])
         redo_all = options['redo']
+        download_again = options['download']
+        import_toxic = options['import_toxic']
+        import_air = options['import_air']
         temp_dir = "/tmp/"
 
         connection.text_factory = lambda x: unicode(x, "utf-8", "ignore")
         if redo_all:
             for year in years_range:
-                ToxicDataPoint.objects.filter(REPORTING_YEAR=year).delete()
-                AirQualityDataPoint.objects.filter(Year=year).delete()
+                if import_toxic:
+                    ToxicDataPoint.objects.filter(REPORTING_YEAR=year).delete()
+                if import_air:
+                    AirQualityDataPoint.objects.filter(Year=year).delete()
             print("deleted all existing data points.")
+
 
         for year in years_range:
             filename = "US_"+str(year)+"_v13.zip"
@@ -51,7 +73,7 @@ class Command(BaseCommand):
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
-            if not os.path.isfile(file_path) or redo_all:
+            if (not os.path.isfile(file_path) or download_again) and import_toxic:
                 try:
                     urllib.urlretrieve(download_url, file_path)
                 except:
@@ -67,7 +89,7 @@ class Command(BaseCommand):
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"US_1_"+str(year)+"_v13.txt"
 
-            if os.path.isfile(file_path) or redo_all:
+            if (os.path.isfile(file_path) or download_again) and import_toxic:
                 try:
                     with zipfile.ZipFile(file_path, "r") as z:
                         z.extractall(tmp_path)
@@ -82,7 +104,7 @@ class Command(BaseCommand):
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
-            if not os.path.isfile(file_path) or redo_all:
+            if (not os.path.isfile(file_path) or download_again) and import_air:
                 try:
                     urllib.urlretrieve(download_url, file_path)
                 except:
@@ -97,7 +119,7 @@ class Command(BaseCommand):
             file_path = tmp_path+filename
             unzipped_file_path = tmp_path+"annual_all_"+str(year)+".csv"
 
-            if os.path.isfile(file_path) or redo_all:
+            if (os.path.isfile(file_path) or download_again) and import_air:
                 try:
                     with zipfile.ZipFile(file_path, "r") as z:
                         z.extractall(tmp_path)
@@ -115,16 +137,20 @@ class Command(BaseCommand):
 
             print("working on ", unzipped_file_path)
 
-            if os.path.isfile(unzipped_file_path) or redo_all:
+            if (os.path.isfile(unzipped_file_path) or redo_all) and import_toxic:
                 try:
                     with open(unzipped_file_path, 'r') as f:
                         is_first_line = True
                         index_to_column = {}
                         counter = 0
+                        toxic_list = []
                         for line in f: 
                             counter = counter + 1
-                            if counter % 1000 == 0:
+                            if counter % max_insert_quantity == 0:
                                 print(counter)
+                                if toxic_list:
+                                    ToxicDataPoint.objects.bulk_create(toxic_list)
+                                toxic_list = []
                             columns = line.split("\t")
                             if is_first_line:
                                 for column_index, column in enumerate(columns):
@@ -134,7 +160,7 @@ class Command(BaseCommand):
                                 is_first_line = False
                             else:
                                 try:
-                                    ToxicDataPoint(
+                                    toxic_list.append(ToxicDataPoint(
                                         FORM_TYPE = encode_for_database(columns[0]),
                                         REPORTING_YEAR = encode_for_database(columns[1]),
                                         TRADE_SECRET_INDICATOR = encode_for_database(columns[2]),
@@ -370,13 +396,15 @@ class Command(BaseCommand):
                                         REVISION_CODE_1 = encode_for_database(columns[232]),
                                         REVISION_CODE_2 = encode_for_database(columns[233]),
                                         METAL_INDICATOR = encode_for_database(columns[234])
-                                    ).save()
+                                    ))
                                 except:
                                     print("couldn't add: ", columns)
                                     print(sys.exc_info()[0])
                                     print(dir(sys.exc_info()[0]))
                                     print(sys.exc_info()[0].message)
                                     print(dir(sys.exc_info()[0].message))
+                        if toxic_list:
+                            ToxicDataPoint.objects.bulk_create(toxic_list)                                    
                 except:
                     pass
 
@@ -391,16 +419,20 @@ class Command(BaseCommand):
 
             print("working on ", unzipped_file_path)
 
-            if os.path.isfile(unzipped_file_path) or redo_all:
+            if (os.path.isfile(unzipped_file_path) or redo_all) and import_air:
                 try:
                     with open(unzipped_file_path, 'r') as f:
                         is_first_line = True
                         index_to_column = {}
                         counter = 0
+                        air_list = []
                         for line in f:
                             counter = counter + 1
-                            if counter % 1000 == 0:
+                            if counter % max_insert_quantity == 0:
                                 print(counter)
+                                if air_list:
+                                    AirQualityDataPoint.objects.bulk_create(air_list)
+                                air_list = []
                             columns = line.split(",")
                             if is_first_line:
                                 for column_index, column in enumerate(columns):
@@ -410,7 +442,7 @@ class Command(BaseCommand):
                                 is_first_line = False
                             else:
                                 try:
-                                    AirQualityDataPoint(
+                                    air_list.append(AirQualityDataPoint(
                                         State_Code = encode_for_database(columns[0]),
                                         County_Code = encode_for_database(columns[1]),
                                         Site_Num = encode_for_database(columns[2]),
@@ -466,12 +498,14 @@ class Command(BaseCommand):
                                         City_Name = encode_for_database(columns[52]),
                                         CBSA_Name = encode_for_database(columns[53]),
                                         Date_of_Last_Change = encode_for_database(columns[54])
-                                    ).save()
+                                    ))
                                 except:
                                     print("couldn't add: ", columns)
                                     print(sys.exc_info()[0])
                                     print(dir(sys.exc_info()[0]))
                                     print(sys.exc_info()[0].message)
                                     print(dir(sys.exc_info()[0].message))
+                        if air_list:
+                            AirQualityDataPoint.objects.bulk_create(air_list)
                 except:
                     pass
