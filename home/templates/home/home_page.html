@@ -76,10 +76,6 @@ var generate_render_method = function(historical_markers){
 				];
 				var marker = L.marker(point);
 				markers.addLayer(marker);
-				if(!map.getBounds().contains(point)){
-					console.log(point);
-					console.log(map.getBounds());
-				}
 				marker_count = marker_count + 1;
 			}else{
 				duplicate_marker_count = duplicate_marker_count + 1;
@@ -112,6 +108,7 @@ var initializeMap = function(position){
 
 	L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ', {
 	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	    minZoom: 12,
 	    maxZoom: 18,
 	    id: '28903289137890890',
 	    accessToken: 'pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ'
