@@ -12,13 +12,14 @@ class AirQualityDataPointSerializer(serializers.HyperlinkedModelSerializer):
     latitude = serializers.CharField(source="Latitude", max_length=1000)
     longitude = serializers.CharField(source="Longitude", max_length=1000)
     title = serializers.SerializerMethodField()
+    year = serializers.CharField(source="Year", max_length=1000)
 
     def get_title(self, obj):
         return str(obj)
 
     class Meta:
         model = AirQualityDataPoint
-        fields = ["latitude", "longitude", "id", "title"]
+        fields = ["latitude", "longitude", "id", "title", "year"]
 
 
 class AirQualityDataPointFilter(django_filters.FilterSet):
@@ -26,10 +27,11 @@ class AirQualityDataPointFilter(django_filters.FilterSet):
     max_latitude = django_filters.NumberFilter(name="Latitude", lookup_type='lte')
     min_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='gte')
     max_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='lte')
+    year = django_filters.NumberFilter(name="Year")
 
     class Meta:
         model = AirQualityDataPoint
-        filter_fields = ('Year','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
+        filter_fields = ('year','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
 
 class AirQualityDataPointViewSet(viewsets.ModelViewSet):
     queryset = AirQualityDataPoint.objects.all()
@@ -45,23 +47,25 @@ class ToxicDataPointSerializer(serializers.HyperlinkedModelSerializer):
     latitude = serializers.CharField(source="LATITUDE", max_length=1000)
     longitude = serializers.CharField(source="LONGITUDE", max_length=1000)
     title = serializers.SerializerMethodField()
+    year = serializers.CharField(source="REPORTING_YEAR", max_length=1000)
 
     def get_title(self, obj):
         return str(obj)
 
     class Meta:
         model = ToxicDataPoint
-        fields = ["latitude", "longitude", "id", "title"]
+        fields = ["latitude", "longitude", "id", "title", "year"]
 
 class ToxicDataPointFilter(django_filters.FilterSet):
     min_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='gte')
     max_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='lte')
     min_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='gte')
     max_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='lte')
+    year = django_filters.NumberFilter(name="REPORTING_YEAR")
 
     class Meta:
         model = ToxicDataPoint
-        filter_fields = ('REPORTING_YEAR','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
+        filter_fields = ('year','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
 
 
 class ToxicDataPointViewSet(viewsets.ModelViewSet):

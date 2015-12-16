@@ -32,7 +32,7 @@ class AirQualityDataPoint(models.Model):
 	Pollutant_Standard = models.CharField(max_length=1000, blank=True)
 	Metric_Used = models.CharField(max_length=1000, blank=True)
 	Method_Name = models.CharField(max_length=1000, blank=True)
-	Year = models.CharField(max_length=1000, blank=True)
+	Year = models.IntegerField()
 	Units_of_Measure = models.CharField(max_length=1000, blank=True)
 	Event_Type = models.CharField(max_length=1000, blank=True)
 	Observation_Count = models.CharField(max_length=1000, blank=True)
@@ -81,7 +81,7 @@ class AirQualityDataPoint(models.Model):
 
 class ToxicDataPoint(models.Model):
 	FORM_TYPE = models.CharField(max_length=1000, blank=True)
-	REPORTING_YEAR = models.CharField(max_length=1000, blank=True)
+	REPORTING_YEAR = models.IntegerField()
 	TRADE_SECRET_INDICATOR = models.CharField(max_length=1000, blank=True)
 	SANITIZED_INDICATOR = models.CharField(max_length=1000, blank=True)
 	TITLE_OF_CERTIFYING_OFFICIAL = models.CharField(max_length=1000, blank=True)

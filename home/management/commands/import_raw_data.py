@@ -3,8 +3,10 @@ from django.db import connection
 import os.path
 import zipfile
 import urllib
-import sys
-from home.models import RawDataMap, DataPoint, ToxicDataPoint, AirQualityDataPoint
+import sys, traceback
+import csv
+from home.models import RawDataMap, AirQualityDataPoint, ToxicDataPoint
+    
 
 def encode_for_database(local_string):
     if local_string.startswith("\"") and local_string.endswith("\""):
@@ -138,8 +140,11 @@ class Command(BaseCommand):
             print("working on ", unzipped_file_path)
 
             if (os.path.isfile(unzipped_file_path) or redo_all) and import_toxic:
+                print("found and working on.")
                 try:
+                    print("next step")
                     with open(unzipped_file_path, 'r') as f:
+                        print("in file step")
                         is_first_line = True
                         index_to_column = {}
                         counter = 0
@@ -398,15 +403,14 @@ class Command(BaseCommand):
                                         METAL_INDICATOR = encode_for_database(columns[234])
                                     ))
                                 except:
-                                    print("couldn't add: ", columns)
-                                    print(sys.exc_info()[0])
-                                    print(dir(sys.exc_info()[0]))
-                                    print(sys.exc_info()[0].message)
-                                    print(dir(sys.exc_info()[0].message))
+                                    print("-"*50)
+                                    traceback.print_exc(file=sys.stdout)
                         if toxic_list:
                             ToxicDataPoint.objects.bulk_create(toxic_list)                                    
                 except:
-                    pass
+                    print("-"*50)
+                    traceback.print_exc(file=sys.stdout)
+
 
                 print("finished", unzipped_file_path)
 
@@ -426,14 +430,15 @@ class Command(BaseCommand):
                         index_to_column = {}
                         counter = 0
                         air_list = []
-                        for line in f:
+                        lines = csv.reader(f, delimiter=',', quotechar='"')
+                        for columns in lines:
                             counter = counter + 1
                             if counter % max_insert_quantity == 0:
                                 print(counter)
                                 if air_list:
                                     AirQualityDataPoint.objects.bulk_create(air_list)
                                 air_list = []
-                            columns = line.split(",")
+
                             if is_first_line:
                                 for column_index, column in enumerate(columns):
                                     index_to_column[column_index] = column
@@ -456,7 +461,7 @@ class Command(BaseCommand):
                                         Pollutant_Standard = encode_for_database(columns[10]),
                                         Metric_Used = encode_for_database(columns[11]),
                                         Method_Name = encode_for_database(columns[12]),
-                                        Year = encode_for_database(columns[13]),
+                                        Year = int(columns[13]),
                                         Units_of_Measure = encode_for_database(columns[14]),
                                         Event_Type = encode_for_database(columns[15]),
                                         Observation_Count = encode_for_database(columns[16]),
@@ -500,12 +505,11 @@ class Command(BaseCommand):
                                         Date_of_Last_Change = encode_for_database(columns[54])
                                     ))
                                 except:
-                                    print("couldn't add: ", columns)
-                                    print(sys.exc_info()[0])
-                                    print(dir(sys.exc_info()[0]))
-                                    print(sys.exc_info()[0].message)
-                                    print(dir(sys.exc_info()[0].message))
+                                    print(columns)
+                                    print("-"*50)
+                                    traceback.print_exc(file=sys.stdout)
                         if air_list:
                             AirQualityDataPoint.objects.bulk_create(air_list)
                 except:
-                    pass
+                    print("-"*50)
+                    traceback.print_exc(file=sys.stdout)
