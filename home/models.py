@@ -76,7 +76,7 @@ class AirQualityDataPoint(models.Model):
 	Date_of_Last_Change = models.CharField(max_length=1000, blank=True)
 
 	def __unicode__(self):
-		return self.Arithmetic_Mean + " " + self.Units_of_Measure + " " + self.Parameter_Name
+		return "Air Quality: "+self.Arithmetic_Mean + " " + self.Units_of_Measure + " " + self.Parameter_Name + "@" + self.Year
 
 
 class ToxicDataPoint(models.Model):
@@ -329,4 +329,4 @@ class ToxicDataPoint(models.Model):
 		]
 
 		val = next((x for x in predence_of_emissions if x != "0"), "0")
-		return val + " " + self.UNIT_OF_MEASURE + " " + self.CHEMICAL_NAME
+		return "Toxic Data: " + val + " " + self.UNIT_OF_MEASURE + " " + self.CHEMICAL_NAME + "@" + self.REPORTING_YEAR

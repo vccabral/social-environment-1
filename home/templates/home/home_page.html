@@ -68,21 +68,20 @@ var generate_render_method = function(historical_markers){
 	return function(data){
 		for(var lcv=0;lcv<data.results.length;lcv++){
 			var pk = data.results[lcv].id
+			var local_markers = [];
 			if(!(pk in historical_markers)){
 				historical_markers[pk] = true;
+
 				var point = [
 					parseFloat(data.results[lcv].latitude), 
 					parseFloat(data.results[lcv].longitude)
 				];
-				var marker = L.marker(point,
-					{"title": data.results[lcv].title}
-				).bindPopup(data.results[lcv].title);
-				markers.addLayer(marker);
-				marker_count = marker_count + 1;
-			}else{
-				duplicate_marker_count = duplicate_marker_count + 1;
+
+				var marker = L.marker(point,{"title": data.results[lcv].title}).bindPopup(data.results[lcv].title);
+
+				local_markers.push(marker);
 			}
-			set_marker_count();
+			markers.addLayers(local_markers);
 		}
 	}
 }
