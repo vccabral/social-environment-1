@@ -22,3 +22,19 @@ Running tests is simple with django
     $ ./manage.py test
 
 
+Addition Reading
+===
+elasticsearch gis route
+---
+http://blog.trifork.com/2013/08/01/server-side-clustering-of-geo-points-on-a-map-using-elasticsearch/
+https://www.elastic.co/blog/geo-location-and-search
+
+heroku postgres gis route
+---
+https://devcenter.heroku.com/articles/heroku-postgres-extensions-postgis-full-text-search#postgis
+https://devcenter.heroku.com/articles/postgis
+https://github.com/cyberdelia/heroku-geo-buildpack/
+
+front end gis route
+---
+https://github.com/turfjs/turf
