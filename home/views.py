@@ -20,6 +20,8 @@ class AirQualityDataPointSerializer(serializers.HyperlinkedModelSerializer):
 class AirQualityDataPointFilter(django_filters.FilterSet):
     min_latitude = django_filters.NumberFilter(name="Latitude", lookup_type='gte')
     max_latitude = django_filters.NumberFilter(name="Latitude", lookup_type='lte')
+    min_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='gte')
+    max_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='lte')
 
     class Meta:
         model = AirQualityDataPoint
@@ -41,11 +43,13 @@ class ToxicDataPointSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ToxicDataPoint
-        fields = ["latitude", "longitude"]
+        fields = ["latitude", "longitude", "id"]
 
 class ToxicDataPointFilter(django_filters.FilterSet):
     min_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='gte')
     max_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='lte')
+    min_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='gte')
+    max_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='lte')
 
     class Meta:
         model = ToxicDataPoint
