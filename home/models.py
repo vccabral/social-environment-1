@@ -75,6 +75,9 @@ class AirQualityDataPoint(models.Model):
 	CBSA_Name = models.CharField(max_length=1000, blank=True)
 	Date_of_Last_Change = models.CharField(max_length=1000, blank=True)
 
+	def __unicode__(self):
+		return self.Arithmetic_Mean + " " + self.Units_of_Measure + " " + self.Parameter_Name
+
 
 class ToxicDataPoint(models.Model):
 	FORM_TYPE = models.CharField(max_length=1000, blank=True)

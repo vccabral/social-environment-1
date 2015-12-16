@@ -11,10 +11,14 @@ import django_filters
 class AirQualityDataPointSerializer(serializers.HyperlinkedModelSerializer):
     latitude = serializers.CharField(source="Latitude", max_length=1000)
     longitude = serializers.CharField(source="Longitude", max_length=1000)
+    title = serializers.SerializerMethodField()
+
+    def get_title(self, obj):
+        return str(obj)
 
     class Meta:
         model = AirQualityDataPoint
-        fields = ["latitude", "longitude", "id"]
+        fields = ["latitude", "longitude", "id", "title"]
 
 
 class AirQualityDataPointFilter(django_filters.FilterSet):
@@ -40,10 +44,14 @@ class AirQualityDataPointViewSet(viewsets.ModelViewSet):
 class ToxicDataPointSerializer(serializers.HyperlinkedModelSerializer):
     latitude = serializers.CharField(source="LATITUDE", max_length=1000)
     longitude = serializers.CharField(source="LONGITUDE", max_length=1000)
+    title = serializers.SerializerMethodField()
+
+    def get_title(self, obj):
+        return str(obj)
 
     class Meta:
         model = ToxicDataPoint
-        fields = ["latitude", "longitude", "id"]
+        fields = ["latitude", "longitude", "id", "title"]
 
 class ToxicDataPointFilter(django_filters.FilterSet):
     min_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='gte')
