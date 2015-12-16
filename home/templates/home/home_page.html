@@ -48,8 +48,8 @@ var get_generic_load_method = function(api_endpoint, render_method){
 			'&min_longitude='+bounds._northEast.lng+'&max_longitude='+bounds._southWest.lng;
 
 		$.ajax(url)
-		.done(render_method)
 		.done(function(data){
+			render_method(data);
 			if(data.next){
 				load_from_url(data.next, render_method);
 			}	
@@ -125,7 +125,8 @@ var initialPosition = {
 	"zoom": 13
 };
 
-if(location.hash){
+console.log(location.hash);
+if(location.hash!="#"){
 	initialPosition.coords.latitude = location.hash.split("/")[0].substring(1);
 	initialPosition.coords.longitude = location.hash.split("/")[1];
 	initialPosition.zoom = location.hash.split("/")[2];
