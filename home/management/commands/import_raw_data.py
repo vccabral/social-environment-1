@@ -48,7 +48,7 @@ class Command(BaseCommand):
         return range(start, end+1)
 
     def handle(self, *args, **options):
-        max_insert_quantity = 10000
+        max_insert_quantity = 100000
 
         print("import raw data")
         years_range = self.get_year_range(options['year_start'][0], options['year_end'][0])
@@ -167,7 +167,7 @@ class Command(BaseCommand):
                                 try:
                                     toxic_list.append(ToxicDataPoint(
                                         FORM_TYPE = encode_for_database(columns[0]),
-                                        REPORTING_YEAR = encode_for_database(columns[1]),
+                                        REPORTING_YEAR = int(columns[1]),
                                         TRADE_SECRET_INDICATOR = encode_for_database(columns[2]),
                                         SANITIZED_INDICATOR = encode_for_database(columns[3]),
                                         TITLE_OF_CERTIFYING_OFFICIAL = encode_for_database(columns[4]),

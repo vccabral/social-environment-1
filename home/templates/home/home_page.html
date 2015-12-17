@@ -38,6 +38,10 @@ var exists_markers = {
 	"air": [],
 	"toxic": []
 };
+var marker_universe = {
+	"air": {},
+	"toxic": {}
+};
 
 var set_marker_count = function(){
 	$("#info").val(marker_count+"|"+duplicate_marker_count);
@@ -63,6 +67,16 @@ var get_generic_load_method = function(api_endpoint, render_method){
 	}
 };
 
+var get_marker = function(data_point){
+	var point = [
+		parseFloat(data_point.latitude), 
+		parseFloat(data_point.longitude)
+	];
+	return L.marker(
+		point,
+		{"title": data_point.title})
+	.bindPopup(data_point.title);
+};
 
 var generate_render_method = function(historical_markers){
 	return function(data){
@@ -71,14 +85,7 @@ var generate_render_method = function(historical_markers){
 			var local_markers = [];
 			if(!(pk in historical_markers)){
 				historical_markers[pk] = true;
-
-				var point = [
-					parseFloat(data.results[lcv].latitude), 
-					parseFloat(data.results[lcv].longitude)
-				];
-
-				var marker = L.marker(point,{"title": data.results[lcv].title}).bindPopup(data.results[lcv].title);
-
+				var marker = get_marker(data.results[lcv]);
 				local_markers.push(marker);
 			}
 			markers.addLayers(local_markers);
