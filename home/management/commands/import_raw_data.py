@@ -48,7 +48,7 @@ class Command(BaseCommand):
         return range(start, end+1)
 
     def handle(self, *args, **options):
-        max_insert_quantity = 20000
+        max_insert_quantity = 5000
 
         print("import raw data")
         years_range = self.get_year_range(options['year_start'][0], options['year_end'][0])
