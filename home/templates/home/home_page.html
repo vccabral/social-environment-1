@@ -58,7 +58,6 @@ html, body, #map {width: 100%;height: 100%;margin: 0;padding: 0;}
 <script src="{% static 'js/leaflet.markercluster-src.js' %}"></script>
 <script>
 var map;
-var markers;
 var current_url = window.location.href;
 var arr = current_url.split("/");
 var base_url = arr[0] + "//" + arr[2];
@@ -109,15 +108,18 @@ var get_marker = function(data_point){
 
 var generate_render_method = function(historical_markers){
 	return function(data){
+		var year = $("#year").val();
+		var local_markers = [];
 		for(var lcv=0;lcv<data.results.length;lcv++){
 			var pk = data.results[lcv].id
-			var local_markers = [];
 			if(!(pk in historical_markers)){
 				historical_markers[pk] = true;
 				var marker = get_marker(data.results[lcv]);
 				local_markers.push(marker);
 			}
-			markers.addLayers(local_markers);
+		}
+		if(data.results.length>0){
+			marker_universe[data.results[0].universe][year].addLayers(local_markers);
 		}
 	}
 }
@@ -134,7 +136,29 @@ var set_refresh_url = function(){
 };
 //function should take a factory to draw icons.
 var load_markers_to_bounds = function(e){
+
 	set_refresh_url();
+	var year = $("#year").val();
+
+	if(!(year in marker_universe["air"])){
+		marker_universe["air"][year] = L.markerClusterGroup({
+	    	spiderfyOnMaxZoom: true,
+	    	showCoverageOnHover: true,
+	    	zoomToBoundsOnClick: true
+		});
+
+		marker_universe["air"][year].addTo(map);
+	}
+
+	if(!(year in marker_universe["toxic"])){
+		marker_universe["toxic"][year] = L.markerClusterGroup({
+	    	spiderfyOnMaxZoom: true,
+	    	showCoverageOnHover: true,
+	    	zoomToBoundsOnClick: true
+		});
+
+		marker_universe["toxic"][year].addTo(map);
+	}
 	var bounds = map.getBounds();
 	load_air_quality_to_map(bounds);
 	load_toxic_to_map(bounds);
@@ -151,25 +175,26 @@ var initializeMap = function(position){
 	    accessToken: 'pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ'
 	}).addTo(map);
 
-	L.marker(
-		[position.coords.latitude, position.coords.longitude],
-		{"title": "Me"}
-
-	).addTo(map);
-
-	markers = L.markerClusterGroup({
-    	spiderfyOnMaxZoom: true,
-    	showCoverageOnHover: true,
-    	zoomToBoundsOnClick: true
-	});
-
-	markers.addTo(map);
-
 	map.on('moveend', load_markers_to_bounds);
 	load_markers_to_bounds();
 }
 
 $("#year").change(function(event){
+	var cur_year = $("#year").val();
+	for (var universe in marker_universe){
+		for(var year in marker_universe[universe]){
+			if (cur_year != year){
+				if (year in marker_universe[universe]){
+					map.removeLayer(marker_universe[universe][year]);
+				}
+			}
+			if (cur_year == year){
+				if (year in marker_universe[universe]){
+					marker_universe[universe][year].addTo(map);
+				}
+			}
+		}
+	}
 	load_markers_to_bounds();
 });
 

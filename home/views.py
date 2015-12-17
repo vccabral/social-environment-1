@@ -13,13 +13,17 @@ class AirQualityDataPointSerializer(serializers.HyperlinkedModelSerializer):
     longitude = serializers.CharField(source="Longitude", max_length=1000)
     title = serializers.SerializerMethodField()
     year = serializers.CharField(source="Year", max_length=1000)
+    universe = serializers.SerializerMethodField()
+
+    def get_universe(self, obj):
+        return "air"
 
     def get_title(self, obj):
         return str(obj)
 
     class Meta:
         model = AirQualityDataPoint
-        fields = ["latitude", "longitude", "id", "title", "year"]
+        fields = ["latitude", "longitude", "id", "title", "year", "universe"]
 
 
 class AirQualityDataPointFilter(django_filters.FilterSet):
@@ -48,13 +52,17 @@ class ToxicDataPointSerializer(serializers.HyperlinkedModelSerializer):
     longitude = serializers.CharField(source="LONGITUDE", max_length=1000)
     title = serializers.SerializerMethodField()
     year = serializers.CharField(source="REPORTING_YEAR", max_length=1000)
+    universe = serializers.SerializerMethodField()
+
+    def get_universe(self, obj):
+        return "toxic"
 
     def get_title(self, obj):
         return str(obj)
 
     class Meta:
         model = ToxicDataPoint
-        fields = ["latitude", "longitude", "id", "title", "year"]
+        fields = ["latitude", "longitude", "id", "title", "year", "universe"]
 
 class ToxicDataPointFilter(django_filters.FilterSet):
     min_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='gte')
