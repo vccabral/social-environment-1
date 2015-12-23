@@ -89,19 +89,29 @@ class ToxicDataPointViewSet(viewsets.ModelViewSet):
 
 class MapScoreAPIView(APIView):
 
+    default_grade = [1, "Good"]
+
     standards = {
         "Ozone 1-hour Daily 2005": {
-            "func": lambda x: float(x)*1000,
+            "func": lambda x: float(x)*10000,
             "grades": [
-                [0, 1, "Good"],
-                [55, 2, "Moderate"],
-                [71, 3, "Unhealthy for Sensitive Groups"],
-                [86, 4, "Unhealthy"],
-                [106, 5, "Very Unhealthy"],
+                [[125, 164], 3, "Unhealthy for Sensitive Groups"],
+                [[164, 204], 4, "Unhealthy"],
+                [[204, 404], 5, "Very Unhealthy"],
+                [[404, 504], 6, "Hazardous"],
+                [[504, 100000], 7, "Very Hazardous"],
             ]
         },
-        # "Ozone 8-Hour 1997": {
-        # },
+        "Ozone 8-Hour 1997": {
+            "func": lambda x: float(x)*1000,
+            "grades": [
+                [[0, 54], 1, "Good"],
+                [[54, 70], 2, "Moderate"],
+                [[70, 85], 3, "Unhealthy for Sensitive Groups"],
+                [[85, 105], 4, "Unhealthy"],
+                [[105, 100000], 5, "Very Unhealthy"],
+            ]
+        },
         # "Ozone 8-Hour 2008": {
         # },
         # "PM25 24-hour 2006": {
@@ -125,23 +135,26 @@ class MapScoreAPIView(APIView):
         grades          = grading_report['grades']
         transmute_func  = grading_report['func']
         localized_score = transmute_func(point['Arithmetic_Mean'])
-        max_grade = [grade for grade in grades if localized_score < grade[0]][0]
-        return max_grade[1], max_grade[2]
 
-    def get_total_air_quality_score(self):
-        list_of_all_standards = self.standards.keys()
-        all_standards = list_of_all_standards
-        
-        intersecting_quality_points = AirQualityDataPoint.objects.filter(
-            Pollutant_Standard__in = all_standards,
+        found_grades = filter(lambda grade: grade[0][0] <= localized_score < grade[0][1], grades)
+
+        if found_grades:
+            return found_grades[0][1], found_grades[0][2]
+        else: 
+            return self.default_grade
+
+    def get_list_of_points(self):
+        return AirQualityDataPoint.objects.filter(
+            Pollutant_Standard__in = self.standards.keys(),
             Latitude__gte = float(self.min_latitude),
             Latitude__lte = float(self.max_latitude),
             Longitude__gte = float(self.min_longitude),
             Longitude__lte = float(self.max_longitude)
-        ).values("Pollutant_Standard", "Arithmetic_Mean", "Latitude", "Longitude")
+        ).values("Pollutant_Standard", "Arithmetic_Mean", "Latitude", "Longitude")        
 
+    def get_total_air_quality_score(self):
+        intersecting_quality_points = self.get_list_of_points()
         scores = [self.get_single_air_quality_score(point) for point in intersecting_quality_points]
-
         return max(scores) 
 
     def get(self, request, *args, **kw):
@@ -153,7 +166,6 @@ class MapScoreAPIView(APIView):
         self.max_longitude  = request.GET.get("max_longitude", -76.86910629272461)
         self.year       = request.GET.get("year")
         self.radius     = request.GET.get("radius")
-
         result['score'] = self.get_total_air_quality_score()
         return response
 
