@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import itertools
 import django_filters
+from math import radians, cos, sin, asin, sqrt
 
 
 ### AIR QUALITY DATA ###
@@ -90,6 +91,7 @@ class ToxicDataPointViewSet(viewsets.ModelViewSet):
 class MapScoreAPIView(APIView):
 
     default_grade = [1, "Good"]
+    approx_degree_to_meter = 100000.0
 
     standards = {
         "Ozone 1-hour Daily 2005": {
@@ -146,30 +148,62 @@ class MapScoreAPIView(APIView):
         else: 
             return self.default_grade
 
+    def haversine(self, lon1, lat1, lon2, lat2):
+        lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+        dlon = lon2 - lon1 
+        dlat = lat2 - lat1 
+        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+        c = 2 * asin(sqrt(a)) 
+        km = 6367 * c
+        return km
+
     def get_list_of_points(self):
-        return AirQualityDataPoint.objects.filter(
-            Pollutant_Standard__in = self.standards.keys(),
-            Latitude__gte = float(self.min_latitude),
-            Latitude__lte = float(self.max_latitude),
-            Longitude__gte = float(self.min_longitude),
-            Longitude__lte = float(self.max_longitude),
-            Year  = self.year
-        ).values("Pollutant_Standard", "Arithmetic_Mean", "Latitude", "Longitude")        
+        if self.filter_type == 1: 
+            return AirQualityDataPoint.objects.filter(
+                Pollutant_Standard__in = self.standards.keys(),
+                Latitude__gte = float(self.min_latitude),
+                Latitude__lte = float(self.max_latitude),
+                Longitude__gte = float(self.min_longitude),
+                Longitude__lte = float(self.max_longitude),
+                Year  = self.year
+            ).values("Pollutant_Standard", "Arithmetic_Mean", "Latitude", "Longitude")        
+        else:
+            return filter(
+                lambda p: self.haversine(self.latitude, self.longitude, p['Latitude'], p['Longitude']) < self.radius,
+                AirQualityDataPoint.objects.filter(
+                    Pollutant_Standard__in = self.standards.keys(),
+                    Latitude__gt = float(self.latitude) - self.radius / self.approx_degree_to_meter,
+                    Latitude__lte = float(self.latitude) + self.radius / self.approx_degree_to_meter,
+                    Longitude__gt = float(self.longitude) - self.radius / self.approx_degree_to_meter,
+                    Longitude__lt = float(self.longitude) + self.radius / self.approx_degree_to_meter,
+                    Year  = self.year
+                ).values("Pollutant_Standard", "Arithmetic_Mean", "Latitude", "Longitude")
+            )
 
     def get_total_air_quality_score(self):
         intersecting_quality_points = self.get_list_of_points()
+
+        print(len(intersecting_quality_points))
         scores = [self.get_single_air_quality_score(point) for point in intersecting_quality_points]
-        return max(scores) 
+        return max(scores) if scores else self.default_grade
 
     def get(self, request, *args, **kw):
         result = {}
         response = Response(result, status=status.HTTP_200_OK)
-        self.min_latitude   = request.GET.get("min_latitude", 38.84024244214068)
-        self.max_latitude   = request.GET.get("max_latitude", 38.940585268033)
-        self.min_longitude  = request.GET.get("min_longitude", -77.11629867553711)
-        self.max_longitude  = request.GET.get("max_longitude", -76.86910629272461)
+
+        # to do add error checking. 
+
+        self.filter_type = int(request.GET.get("filter_type", 1))
+        if self.filter_type == 1:
+            self.min_latitude   = request.GET.get("min_latitude", 38.84024244214068)
+            self.max_latitude   = request.GET.get("max_latitude", 38.940585268033)
+            self.min_longitude  = request.GET.get("min_longitude", -77.11629867553711)
+            self.max_longitude  = request.GET.get("max_longitude", -76.86910629272461)
+        else:
+            self.latitude       = request.GET.get("latitude", 38.84024244214068)
+            self.longitude      = request.GET.get("longitude", -76.86910629272461)
+            self.radius         = float(request.GET.get("radius", 3218.69))
         self.year       = request.GET.get("year", 2012)
-        self.radius     = request.GET.get("radius")
         result['score'] = self.get_total_air_quality_score()
         return response
 
