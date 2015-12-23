@@ -156,6 +156,7 @@ var load_markers_to_bounds = function(e){
 		marker_universe["toxic"][year].addTo(map);
 	}
 	var bounds = map.getBounds();
+	console.log(bounds);
 	load_air_quality_to_map(bounds);
 	load_toxic_to_map(bounds);
 };
