@@ -93,7 +93,7 @@ class MapScoreAPIView(APIView):
 
     standards = {
         "Ozone 1-hour Daily 2005": {
-            "func": lambda x: float(x)*10000,
+            "func": lambda x: float(x)*1000,
             "grades": [
                 [[125, 164], 3, "Unhealthy for Sensitive Groups"],
                 [[164, 204], 4, "Unhealthy"],
@@ -149,7 +149,8 @@ class MapScoreAPIView(APIView):
             Latitude__gte = float(self.min_latitude),
             Latitude__lte = float(self.max_latitude),
             Longitude__gte = float(self.min_longitude),
-            Longitude__lte = float(self.max_longitude)
+            Longitude__lte = float(self.max_longitude),
+            Year  = self.year
         ).values("Pollutant_Standard", "Arithmetic_Mean", "Latitude", "Longitude")        
 
     def get_total_air_quality_score(self):
@@ -164,7 +165,7 @@ class MapScoreAPIView(APIView):
         self.max_latitude   = request.GET.get("max_latitude", 38.940585268033)
         self.min_longitude  = request.GET.get("min_longitude", -77.11629867553711)
         self.max_longitude  = request.GET.get("max_longitude", -76.86910629272461)
-        self.year       = request.GET.get("year")
+        self.year       = request.GET.get("year", 2012)
         self.radius     = request.GET.get("radius")
         result['score'] = self.get_total_air_quality_score()
         return response
