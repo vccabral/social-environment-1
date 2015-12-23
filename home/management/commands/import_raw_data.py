@@ -23,6 +23,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('year_start', nargs='+', type=int)
         parser.add_argument('year_end', nargs='+', type=int)
+        parser.add_argument('block_size', nargs='+', type=int)
         parser.add_argument('--download',
             action='store_true',
             dest='download',
@@ -48,7 +49,7 @@ class Command(BaseCommand):
         return range(start, end+1)
 
     def handle(self, *args, **options):
-        max_insert_quantity = 5000
+        max_insert_quantity = options['block_size'][0]
 
         print("import raw data")
         years_range = self.get_year_range(options['year_start'][0], options['year_end'][0])
@@ -79,7 +80,7 @@ class Command(BaseCommand):
                 try:
                     urllib.urlretrieve(download_url, file_path)
                 except:
-                    pass
+                    print("failed download", file_path)
                 print("downloaded: "+file_path)
             print("completed download: "+file_path)
 
@@ -96,7 +97,7 @@ class Command(BaseCommand):
                     with zipfile.ZipFile(file_path, "r") as z:
                         z.extractall(tmp_path)
                 except:
-                    pass
+                    print("failed unzip", file_path)
             print("completed extract: "+file_path)
 
         for year in years_range:
@@ -110,7 +111,7 @@ class Command(BaseCommand):
                 try:
                     urllib.urlretrieve(download_url, file_path)
                 except:
-                    pass
+                    print("failed download", file_path)
                 print("downloaded: "+file_path)
             print("completed download: "+file_path)
 
@@ -126,7 +127,7 @@ class Command(BaseCommand):
                     with zipfile.ZipFile(file_path, "r") as z:
                         z.extractall(tmp_path)
                 except:
-                    pass
+                    print("failed unzip", file_path)
             print("completed extract: "+file_path)
 
 

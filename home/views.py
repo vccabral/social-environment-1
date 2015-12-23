@@ -1,8 +1,10 @@
 from home.models import AirQualityDataPoint, ToxicDataPoint
 from rest_framework import serializers
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from rest_framework import filters
 from rest_framework.routers import DefaultRouter
+from rest_framework.response import Response
 
 import django_filters
 
@@ -82,9 +84,19 @@ class ToxicDataPointViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ToxicDataPointFilter
 
+#scoring API
+
+class MapScoreAPIView(APIView):
+
+    def get(self, request, *args, **kw):
+        result = []
+        response = Response(result, status=status.HTTP_200_OK)
+        return response
+
 
 
 router = DefaultRouter()
 
+router.register(r'map_score', MapScoreAPIView, base_name='map_score')
 router.register(r'airquality', AirQualityDataPointViewSet)
 router.register(r'toxic', ToxicDataPointViewSet)

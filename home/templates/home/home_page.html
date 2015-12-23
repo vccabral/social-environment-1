@@ -4,7 +4,7 @@
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
 <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}"></script>
 <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}" />
 <link ref="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
@@ -54,9 +54,10 @@ html, body, #map {width: 100%;height: 100%;margin: 0;padding: 0;}
 
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script src="{% static 'js/leaflet.js' %}"></script>
 <script src="{% static 'js/leaflet.markercluster-src.js' %}"></script>
 <script>
+
 var map;
 var current_url = window.location.href;
 var arr = current_url.split("/");
@@ -64,14 +65,8 @@ var base_url = arr[0] + "//" + arr[2];
 var api_call_count = 0;
 var marker_count = 0;
 var duplicate_marker_count = 0;
-var exists_markers = {
-	"air": [],
-	"toxic": []
-};
-var marker_universe = {
-	"air": {},
-	"toxic": {}
-};
+var exists_markers = {"air": [],"toxic": []};
+var marker_universe = {"air": {},"toxic": {}};
 
 
 var load_from_url = function(url, render_method){
@@ -88,6 +83,7 @@ var get_generic_load_method = function(api_endpoint, render_method){
 		$.ajax(url)
 		.done(function(data){
 			render_method(data);
+
 			if(data.next){
 				load_from_url(data.next, render_method);
 			}	
@@ -134,9 +130,9 @@ var set_refresh_url = function(){
 	var center = map.getCenter();
 	location.hash = center.lat+"/"+center.lng+"/"+map.getZoom()+"/"+$("#year").val();
 };
+
 //function should take a factory to draw icons.
 var load_markers_to_bounds = function(e){
-
 	set_refresh_url();
 	var year = $("#year").val();
 
