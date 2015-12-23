@@ -130,8 +130,11 @@ class MapScoreAPIView(APIView):
         # },
     }
 
+    def get_standards(self):
+        return self.standards
+
     def get_single_air_quality_score(self, point):
-        grading_report  = self.standards[point['Pollutant_Standard']]
+        grading_report  = self.get_standards()[point['Pollutant_Standard']]
         grades          = grading_report['grades']
         transmute_func  = grading_report['func']
         localized_score = transmute_func(point['Arithmetic_Mean'])
