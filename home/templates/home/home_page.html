@@ -65,20 +65,36 @@ var base_url = arr[0] + "//" + arr[2];
 var api_call_count = 0;
 var marker_count = 0;
 var duplicate_marker_count = 0;
-var exists_markers = {"air": [],"toxic": []};
-var marker_universe = {"air": {},"toxic": {}};
+var exists_markers = {"air": [],"toxic": [], "quality": []};
+var marker_universe = {"air": {},"toxic": {}, "quality": {}};
 var cirlce;
 
 var load_from_url = function(url, render_method){
 	$.ajax(url).done(render_method);
 };
 
-var get_generic_load_method = function(api_endpoint, render_method){
+
+var air_quality_url_from_bounds = function(api_endpoint, bounds){
+	var lat = (bounds._southWest.lat + bounds._northEast.lat) / 2.0;
+	var lng = (bounds._southWest.lng + bounds._northEast.lng) / 2.0;
+	var url = base_url + api_endpoint + 
+		'?latitude=' + lat + 
+		'&longitude=' + lng + 
+		'&year=' + $("#year").val();
+	return url;
+};
+
+var generic_url_from_bounds = function(api_endpoint, bounds){
+	var url = base_url + api_endpoint + 
+		'?min_latitude='+bounds._southWest.lat+'&max_latitude='+bounds._northEast.lat+
+		'&min_longitude='+bounds._southWest.lng+'&max_longitude='+bounds._northEast.lng+
+		"&year="+$("#year").val();
+	return url;
+}
+
+var get_generic_load_method = function(api_endpoint, render_method, get_url_from_bounds){
 	return function(bounds){
-		var url = base_url + api_endpoint + 
-			'?min_latitude='+bounds._southWest.lat+'&max_latitude='+bounds._northEast.lat+
-			'&min_longitude='+bounds._southWest.lng+'&max_longitude='+bounds._northEast.lng+
-			"&year="+$("#year").val();
+		var url = get_url_from_bounds(api_endpoint, bounds);
 
 		$.ajax(url)
 		.done(function(data){
@@ -120,11 +136,37 @@ var generate_render_method = function(historical_markers){
 	}
 }
 
-var render_toxic_data = generate_render_method(exists_markers['toxic']);
-var load_toxic_to_map = get_generic_load_method('/api/v1/toxic/', render_toxic_data);
+var load_toxic_to_map = get_generic_load_method(
+	'/api/v1/toxic/',
+	generate_render_method(
+		exists_markers['toxic']
+	),
+	generic_url_from_bounds
+);
 
-var render_air_data = generate_render_method(exists_markers['air']);
-var load_air_quality_to_map = get_generic_load_method('/api/v1/airquality/', render_air_data);
+var load_air_quality_to_map = get_generic_load_method(
+	'/api/v1/airquality/', 
+	generate_render_method(
+		exists_markers['air']
+	),
+	generic_url_from_bounds
+);
+
+var load_generic_quality_to_map = get_generic_load_method(
+	'/api/v1/map_score/', 
+	function(data){
+		var year = $("#year").val();
+		var marker = get_marker(data.results[0]);
+		marker_universe[data.results[0].universe][year].addLayer(marker);
+	},
+	air_quality_url_from_bounds
+);
+
+var all_load_methods = [
+	// load_toxic_to_map, 
+	// load_air_quality_to_map,
+	load_generic_quality_to_map
+];
 
 var set_refresh_url = function(){
 	var center = map.getCenter();
@@ -132,33 +174,35 @@ var set_refresh_url = function(){
 };
 
 //function should take a factory to draw icons.
+
+var create_universe = function(universe_name, year){
+	if(!(year in marker_universe[universe_name])){
+		marker_universe[universe_name][year] = L.markerClusterGroup({
+	    	spiderfyOnMaxZoom: true,
+	    	showCoverageOnHover: true,
+	    	zoomToBoundsOnClick: true
+		});
+
+		marker_universe[universe_name][year].addTo(map);
+	}
+	console.log(marker_universe);
+};
+
 var load_markers_to_bounds = function(e){
 	set_refresh_url();
+
 	var year = $("#year").val();
-
-	if(!(year in marker_universe["air"])){
-		marker_universe["air"][year] = L.markerClusterGroup({
-	    	spiderfyOnMaxZoom: true,
-	    	showCoverageOnHover: true,
-	    	zoomToBoundsOnClick: true
-		});
-
-		marker_universe["air"][year].addTo(map);
-	}
-
-	if(!(year in marker_universe["toxic"])){
-		marker_universe["toxic"][year] = L.markerClusterGroup({
-	    	spiderfyOnMaxZoom: true,
-	    	showCoverageOnHover: true,
-	    	zoomToBoundsOnClick: true
-		});
-
-		marker_universe["toxic"][year].addTo(map);
-	}
 	var bounds = map.getBounds();
+
+	create_universe("air", year);
+	create_universe("toxic", year);
+	create_universe("quality", year);
+
 	circle.setLatLng(map.getCenter());
-	load_air_quality_to_map(bounds);
-	load_toxic_to_map(bounds);
+
+	for(var i in all_load_methods){
+		all_load_methods[i](bounds);
+	}
 };
 
 var initializeMap = function(position){

@@ -149,6 +149,7 @@ class MapScoreAPIView(APIView):
             return self.default_grade
 
     def haversine(self, lon1, lat1, lon2, lat2):
+        print(lon1, lat1, lon2, lat2)
         lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
         dlon = lon2 - lon1 
         dlat = lat2 - lat1 
@@ -188,23 +189,35 @@ class MapScoreAPIView(APIView):
         return max(scores) if scores else self.default_grade
 
     def get(self, request, *args, **kw):
-        result = {}
+        result = {
+            "count": 1,
+            "next": None,
+            "previous": None,
+            "results": [],
+        }
         response = Response(result, status=status.HTTP_200_OK)
 
         # to do add error checking. 
 
-        self.filter_type = int(request.GET.get("filter_type", 1))
+        self.filter_type = int(request.GET.get("filter_type", 2))
         if self.filter_type == 1:
             self.min_latitude   = request.GET.get("min_latitude", 38.84024244214068)
             self.max_latitude   = request.GET.get("max_latitude", 38.940585268033)
             self.min_longitude  = request.GET.get("min_longitude", -77.11629867553711)
             self.max_longitude  = request.GET.get("max_longitude", -76.86910629272461)
         else:
-            self.latitude       = request.GET.get("latitude", 38.84024244214068)
-            self.longitude      = request.GET.get("longitude", -76.86910629272461)
+            self.latitude       = float(request.GET.get("latitude", 38.84024244214068))
+            self.longitude      = float(request.GET.get("longitude", -76.86910629272461))
             self.radius         = float(request.GET.get("radius", 3218.69))
         self.year       = request.GET.get("year", 2012)
-        result['score'] = self.get_total_air_quality_score()
+
+        score = self.get_total_air_quality_score()
+        result["results"].append({
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "title": "Air Quality Score: " + str(score[1]),
+            "universe": "quality",
+        })
         return response
 
 
