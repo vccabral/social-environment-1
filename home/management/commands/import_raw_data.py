@@ -1,11 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
+from django.db import migrations, models
+
 import os.path
 import zipfile
 import urllib
 import sys, traceback
 import csv
-from home.models import RawDataMap, AirQualityDataPoint, ToxicDataPoint
     
 
 def encode_for_database(local_string):
@@ -50,6 +51,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         max_insert_quantity = options['block_size'][0]
+
+        AirQualityDataPoint = apps.get_model("home", "AirQualityDataPoint")
+        ToxicDataPoint = apps.get_model("home", "ToxicDataPoint")
 
         print("import raw data")
         years_range = self.get_year_range(options['year_start'][0], options['year_end'][0])
