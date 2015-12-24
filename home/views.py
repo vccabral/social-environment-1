@@ -97,6 +97,7 @@ class MapScoreAPIView(APIView):
         "Ozone 1-hour Daily 2005": {
             "func": lambda x: float(x)*1000,
             "grades": [
+                [[0, 124]], 1, "Good"],
                 [[125, 164], 3, "Unhealthy for Sensitive Groups"],
                 [[164, 204], 4, "Unhealthy"],
                 [[204, 404], 5, "Very Unhealthy"],
@@ -116,20 +117,80 @@ class MapScoreAPIView(APIView):
         },
         # "Ozone 8-Hour 2008": {
         # },
-        # "PM25 24-hour 2006": {
-        # },
-        # "PM25 24-hour 2013": {
-        # },
-        # "PM10 24-hour 2006": {
-        # },
-        # "CO 8-hour 1971": {
-        # },
-        # "SO2 1-hour 2010": {
-        # }
-        # "SO2 24-hour 1971": {
-        # },
-        # "NO2 1-hour": {
-        # },
+         "PM25 24-hour 2006": {
+            "func": lambda x: float(x)*1000,
+            "grades": [
+                [[0, 12], 1, "Good"],
+                [[12.1, 35.4], 2, "Moderate"],
+                [[35.5, 55.4], 3, "Unhealthy for Sensitive Groups"],
+                [[55.5, 150.4], 4, "Unhealthy"],
+                [[150.5, 250.4], 5, "Very Unhealthy"],
+                [[250.5, 350.4], 6, "Hazardous"],
+                [[350.5, 100000], 7, "Very Hazardous"],
+            ]
+         },
+         "PM25 24-hour 2013": {
+            "func": lambda x: float(x)*1000,
+            "grades": [
+                [[0, 12], 1, "Good"],
+                [[12.1, 35.4], 2, "Moderate"],
+                [[35.5, 55.4], 3, "Unhealthy for Sensitive Groups"],
+                [[55.5, 150.4], 4, "Unhealthy"],
+                [[150.5, 250.4], 5, "Very Unhealthy"],
+                [[250.5, 350.4], 6, "Hazardous"],
+                [[350.5, 100000], 7, "Very Hazardous"],
+            ]
+         },
+         "PM10 24-hour 2006": {
+            "func": lambda x: float(x)*1000,
+            "grades": [
+                [[0, 54], 1, "Good"],
+                [[55, 154], 2, "Moderate"],
+                [[155, 254], 3, "Unhealthy for Sensitive Groups"],
+                [[255, 354], 4, "Unhealthy"],
+                [[355, 424], 5, "Very Unhealthy"],
+                [[425, 504], 6, "Hazardous"],
+                [[505, 100000], 7, "Very Hazardous"],
+            ]
+         },
+         "CO 8-hour 1971": {
+                [[0, 4.4], 1, "Good"],
+                [[4.5, 9.4], 2, "Moderate"],
+                [[9.5, 12.4], 3, "Unhealthy for Sensitive Groups"],
+                [[12.5, 15.4], 4, "Unhealthy"],
+                [[15.5, 30.4], 5, "Very Unhealthy"],
+                [[30.5, 40.4], 6, "Hazardous"],
+                [[40.5, 100000], 7, "Very Hazardous"],
+            ]
+         },
+         "SO2 1-hour 2010": {
+                [[0, 35], 1, "Good"],
+                [[46, 75], 2, "Moderate"],
+                [[76, 185], 3, "Unhealthy for Sensitive Groups"],
+                [[186, 304], 4, "Unhealthy"],
+                [[305, 604], 5, "Very Unhealthy"],
+                [[605, 804], 6, "Hazardous"],
+                [[805, 100000], 7, "Very Hazardous"],
+            ]
+         }
+         "SO2 24-hour 1971": {
+                [[0, 35], 1, "Good"],
+                [[46, 75], 2, "Moderate"],
+                [[76, 185], 3, "Unhealthy for Sensitive Groups"],
+                [[186, 304], 4, "Unhealthy"],
+                [[305, 604], 5, "Very Unhealthy"],
+                [[605, 804], 6, "Hazardous"],
+                [[805, 100000], 7, "Very Hazardous"],
+         },
+         "NO2 1-hour": {
+                [[0, 53], 1, "Good"],
+                [[54, 100], 2, "Moderate"],
+                [[101, 360], 3, "Unhealthy for Sensitive Groups"],
+                [[361, 649], 4, "Unhealthy"],
+                [[650, 1249], 5, "Very Unhealthy"],
+                [[1250, 1649], 6, "Hazardous"],
+                [[1650, 100000], 7, "Very Hazardous"],
+         },
     }
 
     def get_standards(self):
