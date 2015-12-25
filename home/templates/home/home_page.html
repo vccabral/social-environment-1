@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="{% static 'css/MarkerCluster.css' %}"></script>
 <link rel="stylesheet" href="{% static 'css/MarkerCluster.Default.css' %}" />
 <link ref="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+<link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
 <style>
 html, body, #map {width: 100%;height: 100%;margin: 0;padding: 0;}
 #map {position: relative;}
@@ -55,6 +56,7 @@ html, body, #map {width: 100%;height: 100%;margin: 0;padding: 0;}
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="{% static 'js/leaflet.js' %}"></script>
+<script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
 <script src="{% static 'js/leaflet.markercluster-src.js' %}"></script>
 <script>
 
@@ -215,6 +217,17 @@ var initializeMap = function(position){
 	    id: '28903289137890890',
 	    accessToken: 'pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ'
 	}).addTo(map);
+
+	L.mapbox.accessToken = 'pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ';
+
+	var geocoder = L.mapbox.geocoderControl('mapbox.places', {
+        autocomplete: true,
+        keepOpen: true
+    });
+	map.addControl(geocoder);
+	geocoder.on('select', function(event){
+		$(".leaflet-control-mapbox-geocoder-form").find("input").val(event.feature.place_name);
+	});
 
 	circle = L.circle(center, 3218.69); // two miles
 	circle.addTo(map);
