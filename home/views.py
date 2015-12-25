@@ -90,14 +90,14 @@ class ToxicDataPointViewSet(viewsets.ModelViewSet):
 
 class MapScoreAPIView(APIView):
 
-    default_grade = [1, "Good"]
+    default_grade = [1, "Good", "No Air Quality Data"]
     approx_degree_to_meter = 100000.0
 
     standards = {
         "Ozone 1-hour Daily 2005": {
             "func": lambda x: float(x)*1000,
             "grades": [
-                [[0, 124]], 1, "Good"],
+                [[0, 124], 1, "Good"],
                 [[125, 164], 3, "Unhealthy for Sensitive Groups"],
                 [[164, 204], 4, "Unhealthy"],
                 [[204, 404], 5, "Very Unhealthy"],
@@ -115,9 +115,7 @@ class MapScoreAPIView(APIView):
                 [[105, 100000], 5, "Very Unhealthy"],
             ]
         },
-        # "Ozone 8-Hour 2008": {
-        # },
-         "PM25 24-hour 2006": {
+        "PM25 24-hour 2006": {
             "func": lambda x: float(x)*1000,
             "grades": [
                 [[0, 12], 1, "Good"],
@@ -128,8 +126,8 @@ class MapScoreAPIView(APIView):
                 [[250.5, 350.4], 6, "Hazardous"],
                 [[350.5, 100000], 7, "Very Hazardous"],
             ]
-         },
-         "PM25 24-hour 2013": {
+        },
+        "PM25 24-hour 2013": {
             "func": lambda x: float(x)*1000,
             "grades": [
                 [[0, 12], 1, "Good"],
@@ -140,8 +138,8 @@ class MapScoreAPIView(APIView):
                 [[250.5, 350.4], 6, "Hazardous"],
                 [[350.5, 100000], 7, "Very Hazardous"],
             ]
-         },
-         "PM10 24-hour 2006": {
+        },
+        "PM10 24-hour 2006": {
             "func": lambda x: float(x)*1000,
             "grades": [
                 [[0, 54], 1, "Good"],
@@ -152,8 +150,10 @@ class MapScoreAPIView(APIView):
                 [[425, 504], 6, "Hazardous"],
                 [[505, 100000], 7, "Very Hazardous"],
             ]
-         },
-         "CO 8-hour 1971": {
+        },
+        "CO 8-hour 1971": {
+            "func": lambda x: float(x),
+            "grades": [
                 [[0, 4.4], 1, "Good"],
                 [[4.5, 9.4], 2, "Moderate"],
                 [[9.5, 12.4], 3, "Unhealthy for Sensitive Groups"],
@@ -162,8 +162,10 @@ class MapScoreAPIView(APIView):
                 [[30.5, 40.4], 6, "Hazardous"],
                 [[40.5, 100000], 7, "Very Hazardous"],
             ]
-         },
-         "SO2 1-hour 2010": {
+        },
+        "SO2 1-hour 2010": {
+            "func": lambda x: float(x),
+            "grades": [
                 [[0, 35], 1, "Good"],
                 [[46, 75], 2, "Moderate"],
                 [[76, 185], 3, "Unhealthy for Sensitive Groups"],
@@ -172,8 +174,10 @@ class MapScoreAPIView(APIView):
                 [[605, 804], 6, "Hazardous"],
                 [[805, 100000], 7, "Very Hazardous"],
             ]
-         }
-         "SO2 24-hour 1971": {
+        },
+        "SO2 24-hour 1971": {
+            "func": lambda x: float(x),
+            "grades": [
                 [[0, 35], 1, "Good"],
                 [[46, 75], 2, "Moderate"],
                 [[76, 185], 3, "Unhealthy for Sensitive Groups"],
@@ -181,8 +185,11 @@ class MapScoreAPIView(APIView):
                 [[305, 604], 5, "Very Unhealthy"],
                 [[605, 804], 6, "Hazardous"],
                 [[805, 100000], 7, "Very Hazardous"],
-         },
-         "NO2 1-hour": {
+            ]
+        },
+        "NO2 1-hour": {
+            "func": lambda x: float(x),
+            "grades": [
                 [[0, 53], 1, "Good"],
                 [[54, 100], 2, "Moderate"],
                 [[101, 360], 3, "Unhealthy for Sensitive Groups"],
@@ -190,7 +197,8 @@ class MapScoreAPIView(APIView):
                 [[650, 1249], 5, "Very Unhealthy"],
                 [[1250, 1649], 6, "Hazardous"],
                 [[1650, 100000], 7, "Very Hazardous"],
-         },
+            ]
+        },
     }
 
     def get_standards(self):
@@ -205,12 +213,11 @@ class MapScoreAPIView(APIView):
         found_grades = filter(lambda grade: grade[0][0] <= localized_score < grade[0][1], grades)
 
         if found_grades:
-            return found_grades[0][1], found_grades[0][2]
+            return found_grades[0][1], found_grades[0][2], point['Pollutant_Standard']
         else: 
             return self.default_grade
 
     def haversine(self, lon1, lat1, lon2, lat2):
-        print(lon1, lat1, lon2, lat2)
         lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
         dlon = lon2 - lon1 
         dlat = lat2 - lat1 
@@ -245,7 +252,6 @@ class MapScoreAPIView(APIView):
     def get_total_air_quality_score(self):
         intersecting_quality_points = self.get_list_of_points()
 
-        print(len(intersecting_quality_points))
         scores = [self.get_single_air_quality_score(point) for point in intersecting_quality_points]
         return max(scores) if scores else self.default_grade
 
@@ -276,7 +282,7 @@ class MapScoreAPIView(APIView):
         result["results"].append({
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "title": "Air Quality Score: " + str(score[1]),
+            "title": "Air Quality Score: " + str(score[1]) + " based on " + score[2],
             "universe": "quality",
         })
         return response
