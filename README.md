@@ -11,9 +11,8 @@ This project will eventually be an open source project. Before that point, we wi
     $ git clone git@github.com:excellaco/social-environment.git
     $ cd social-environment
     $ ./manage.py migrate
-    $ ./manage.py import_raw_data
-    $ ./manage.py tranform_raw_data # write me
     $ ./manage.py runserver
+
 
 Testing
 ===
