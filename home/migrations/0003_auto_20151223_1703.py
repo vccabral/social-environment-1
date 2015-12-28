@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import migrations, models, connection
 from django.core import management
-django.conf import settings
+from django.conf import settings
 
 import os.path
 import zipfile
