@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',    
+    'rest_framework',   
+    'django_extensions', 
 ]
 
 REST_FRAMEWORK = {
@@ -106,10 +107,9 @@ DATABASES = {
     }
 }
 
-if "DATABASE_URL" in os.environ:
-    import dj_database_url
-    DATABASES['default'] =  dj_database_url.config()
+TEMP_DRIVE = "/tmp/"
 
+if "DATABASE_URL" in os.environ:
     # Honor the 'X-Forwarded-Proto' header for request.is_secure()
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -125,6 +125,21 @@ if "DATABASE_URL" in os.environ:
         os.path.join(BASE_DIR, 'static'),
     )
     DEBUG = False
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': 'socialenvironment',                      # Or path to database file if using sqlite3.
+            # The following settings are not used with sqlite3:
+            'USER': 'socialenvironment',
+            'PASSWORD': 'socialenvironment@!#!%!@#@!#%324322342',
+            'HOST': 'localhost',                      # Empty for localhost through domain sockets or           '127.0.0.1' for localhost through TCP.
+            'PORT': '',                      # Set to empty string for default.
+        }
+    }    
+
+    TEMP_DRIVE = "/dev/sdf"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import migrations, models, connection
 from django.core import management
+django.conf import settings
 
 import os.path
 import zipfile
@@ -32,7 +33,9 @@ def create_air_quality_database(apps, schema_editor):
     download_again = True
     import_toxic = True
     import_air = True
-    temp_dir = "/tmp/"
+    temp_dir = settings.TEMP_DRIVE
+
+
 
     connection.text_factory = lambda x: unicode(x, "utf-8", "ignore")
     if redo_all:
