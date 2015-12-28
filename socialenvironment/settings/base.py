@@ -138,7 +138,7 @@ if "DATABASE_URL" in os.environ:
         }
     }    
 
-    TEMP_DRIVE = "/dev/sdf"
+    TEMP_DRIVE = "/tmp/"
 
 
 # Internationalization
