@@ -136,9 +136,9 @@ def create_air_quality_database(apps, schema_editor):
                         counter = counter + 1
                         if counter % max_insert_quantity == 0:
                             print(counter)
-                            if toxic_list:
-                                with transaction.atomic():
-                                    ToxicDataPoint.objects.bulk_create(toxic_list)
+                            # if toxic_list:
+                            #     with transaction.atomic():
+                            #         ToxicDataPoint.objects.bulk_create(toxic_list)
                             toxic_list = []
                         columns = line.split("\t")
                         if is_first_line:
@@ -150,7 +150,7 @@ def create_air_quality_database(apps, schema_editor):
                             is_first_line = False
                         else:
                             try:
-                                toxic_list.append(ToxicDataPoint(
+                                ToxicDataPoint(
                                     FORM_TYPE = encode_for_database(columns[0]),
                                     REPORTING_YEAR = int(columns[1]),
                                     TRADE_SECRET_INDICATOR = encode_for_database(columns[2]),
@@ -386,13 +386,13 @@ def create_air_quality_database(apps, schema_editor):
                                     REVISION_CODE_1 = encode_for_database(columns[232]),
                                     REVISION_CODE_2 = encode_for_database(columns[233]),
                                     METAL_INDICATOR = encode_for_database(columns[234])
-                                ))
+                                ).save()
                             except:
                                 print("-"*50)
                                 traceback.print_exc(file=sys.stdout)
-                    if toxic_list:
-                        with transaction.atomic():
-                            ToxicDataPoint.objects.bulk_create(toxic_list)                                    
+                    # if toxic_list:
+                    #     with transaction.atomic():
+                    #         ToxicDataPoint.objects.bulk_create(toxic_list)                                    
             except:
                 print("-"*50)
                 traceback.print_exc(file=sys.stdout)
@@ -421,9 +421,9 @@ def create_air_quality_database(apps, schema_editor):
                         counter = counter + 1
                         if counter % max_insert_quantity == 0:
                             print(counter)
-                            if air_list:
-                                with transaction.atomic():
-                                    AirQualityDataPoint.objects.bulk_create(air_list)
+                            # if air_list:
+                            #     with transaction.atomic():
+                            #         AirQualityDataPoint.objects.bulk_create(air_list)
                             air_list = []
 
                         if is_first_line:
@@ -435,7 +435,7 @@ def create_air_quality_database(apps, schema_editor):
                             is_first_line = False
                         else:
                             try:
-                                air_list.append(AirQualityDataPoint(
+                                AirQualityDataPoint(
                                     State_Code = encode_for_database(columns[0]),
                                     County_Code = encode_for_database(columns[1]),
                                     Site_Num = encode_for_database(columns[2]),
@@ -491,14 +491,14 @@ def create_air_quality_database(apps, schema_editor):
                                     City_Name = encode_for_database(columns[52]),
                                     CBSA_Name = encode_for_database(columns[53]),
                                     Date_of_Last_Change = encode_for_database(columns[54])
-                                ))
+                                ).save()
                             except:
                                 print(columns)
                                 print("-"*50)
                                 traceback.print_exc(file=sys.stdout)
-                    if air_list:
-                        with transaction.atomic():
-                            AirQualityDataPoint.objects.bulk_create(air_list)
+                    # if air_list:
+                    #     with transaction.atomic():
+                    #         AirQualityDataPoint.objects.bulk_create(air_list)
             except:
                 print("-"*50)
                 traceback.print_exc(file=sys.stdout)
