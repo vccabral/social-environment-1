@@ -158,6 +158,7 @@ var load_generic_quality_to_map = get_generic_load_method(
 	'/api/v1/map_score/', 
 	function(data){
 		var year = $("#year").val();
+		marker_universe[data.results[0].universe][year].clearLayers();
 		var marker = get_marker(data.results[0]);
 		marker_universe[data.results[0].universe][year].addLayer(marker);
 	},
