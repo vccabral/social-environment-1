@@ -24,7 +24,7 @@ def create_air_quality_database(apps, schema_editor):
     ToxicDataPoint = apps.get_model("home", "ToxicDataPoint")
     RawDataMap = apps.get_model("home", "RawDataMap")
 
-    max_insert_quantity = 100000
+    max_insert_quantity = 10000
 
     print("import raw data")
     import_all = True
