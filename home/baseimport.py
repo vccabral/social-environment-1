@@ -22,7 +22,12 @@ def create_air_quality_database(apps, schema_editor, year):
     RawDataMap = apps.get_model("home", "RawDataMap")
 
     max_insert_quantity = 10000
-    years_range = range(year, year+1)
+
+    if not settings.DEBUG or year == 2013:
+        years_range = range(year, year+1)
+    else:
+        years_range = range(year, year)
+
     temp_dir = settings.TEMP_DRIVE
 
     connection.text_factory = lambda x: unicode(x, "utf-8", "ignore")
