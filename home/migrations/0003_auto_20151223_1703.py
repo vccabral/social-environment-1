@@ -381,7 +381,7 @@ def create_air_quality_database(apps, schema_editor):
                             REVISION_CODE_2 = encode_for_database(columns[233]),
                             METAL_INDICATOR = encode_for_database(columns[234])
                         )
-                        p..save()
+                        p.save()
 
 
             print("finished", unzipped_file_path)
