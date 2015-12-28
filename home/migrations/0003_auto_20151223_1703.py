@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.db import migrations, models, connection
+from django.db import migrations, models, connection, transaction
 from django.core import management
 from django.conf import settings
 
@@ -137,14 +137,16 @@ def create_air_quality_database(apps, schema_editor):
                         if counter % max_insert_quantity == 0:
                             print(counter)
                             if toxic_list:
-                                ToxicDataPoint.objects.bulk_create(toxic_list)
+                                with transaction.atomic():
+                                    ToxicDataPoint.objects.bulk_create(toxic_list)
                             toxic_list = []
                         columns = line.split("\t")
                         if is_first_line:
                             for column_index, column in enumerate(columns):
                                 index_to_column[column_index] = column
-                                if not RawDataMap.objects.filter(import_id="toxic release", identifier=column).exists():
-                                    RawDataMap(import_id="toxic release", identifier=column).save()
+                                with transaction.atomic():
+                                    if not RawDataMap.objects.filter(import_id="toxic release", identifier=column).exists():
+                                        RawDataMap(import_id="toxic release", identifier=column).save()
                             is_first_line = False
                         else:
                             try:
@@ -389,7 +391,8 @@ def create_air_quality_database(apps, schema_editor):
                                 print("-"*50)
                                 traceback.print_exc(file=sys.stdout)
                     if toxic_list:
-                        ToxicDataPoint.objects.bulk_create(toxic_list)                                    
+                        with transaction.atomic():
+                            ToxicDataPoint.objects.bulk_create(toxic_list)                                    
             except:
                 print("-"*50)
                 traceback.print_exc(file=sys.stdout)
@@ -419,14 +422,16 @@ def create_air_quality_database(apps, schema_editor):
                         if counter % max_insert_quantity == 0:
                             print(counter)
                             if air_list:
-                                AirQualityDataPoint.objects.bulk_create(air_list)
+                                with transaction.atomic():
+                                    AirQualityDataPoint.objects.bulk_create(air_list)
                             air_list = []
 
                         if is_first_line:
                             for column_index, column in enumerate(columns):
                                 index_to_column[column_index] = column
-                                if not RawDataMap.objects.filter(import_id="air quality", identifier=column).exists():
-                                    RawDataMap(import_id="air quality", identifier=column).save()
+                                with transaction.atomic():
+                                    if not RawDataMap.objects.filter(import_id="air quality", identifier=column).exists():
+                                        RawDataMap(import_id="air quality", identifier=column).save()
                             is_first_line = False
                         else:
                             try:
@@ -492,7 +497,8 @@ def create_air_quality_database(apps, schema_editor):
                                 print("-"*50)
                                 traceback.print_exc(file=sys.stdout)
                     if air_list:
-                        AirQualityDataPoint.objects.bulk_create(air_list)
+                        with transaction.atomic():
+                            AirQualityDataPoint.objects.bulk_create(air_list)
             except:
                 print("-"*50)
                 traceback.print_exc(file=sys.stdout)
