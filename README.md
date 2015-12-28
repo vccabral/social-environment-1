@@ -10,6 +10,8 @@ This project will eventually be an open source project. Before that point, we wi
 
     $ git clone git@github.com:excellaco/social-environment.git
     $ cd social-environment
+    $ pip install -r requirements.txt
+    $ export SECRET_KEY="1"
     $ ./manage.py migrate
     $ ./manage.py runserver
 
