@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.db import migrations, models, connection, transaction
+from django.db import migrations, models, connection
 from django.core import management
 from django.conf import settings
 
@@ -140,12 +140,11 @@ def create_air_quality_database(apps, schema_editor):
                     if is_first_line:
                         for column_index, column in enumerate(columns):
                             index_to_column[column_index] = column
-                            with transaction.atomic():
-                                if not RawDataMap.objects.filter(import_id="toxic release", identifier=column).exists():
-                                    RawDataMap(import_id="toxic release", identifier=column).save()
+                            if not RawDataMap.objects.filter(import_id="toxic release", identifier=column).exists():
+                                RawDataMap(import_id="toxic release", identifier=column).save()
                         is_first_line = False
                     else:
-                        ToxicDataPoint(
+                        p = ToxicDataPoint(
                             FORM_TYPE = encode_for_database(columns[0]),
                             REPORTING_YEAR = int(columns[1]),
                             TRADE_SECRET_INDICATOR = encode_for_database(columns[2]),
@@ -381,7 +380,8 @@ def create_air_quality_database(apps, schema_editor):
                             REVISION_CODE_1 = encode_for_database(columns[232]),
                             REVISION_CODE_2 = encode_for_database(columns[233]),
                             METAL_INDICATOR = encode_for_database(columns[234])
-                        ).save()
+                        )
+                        p..save()
 
 
             print("finished", unzipped_file_path)
@@ -411,12 +411,11 @@ def create_air_quality_database(apps, schema_editor):
                     if is_first_line:
                         for column_index, column in enumerate(columns):
                             index_to_column[column_index] = column
-                            with transaction.atomic():
-                                if not RawDataMap.objects.filter(import_id="air quality", identifier=column).exists():
-                                    RawDataMap(import_id="air quality", identifier=column).save()
+                            if not RawDataMap.objects.filter(import_id="air quality", identifier=column).exists():
+                                RawDataMap(import_id="air quality", identifier=column).save()
                         is_first_line = False
                     else:
-                        AirQualityDataPoint(
+                        p = AirQualityDataPoint(
                             State_Code = encode_for_database(columns[0]),
                             County_Code = encode_for_database(columns[1]),
                             Site_Num = encode_for_database(columns[2]),
@@ -472,7 +471,8 @@ def create_air_quality_database(apps, schema_editor):
                             City_Name = encode_for_database(columns[52]),
                             CBSA_Name = encode_for_database(columns[53]),
                             Date_of_Last_Change = encode_for_database(columns[54])
-                        ).save()
+                        )
+                        p.save()
 
 class Migration(migrations.Migration):
 
