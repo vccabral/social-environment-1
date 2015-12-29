@@ -54,7 +54,7 @@ The social-environment application has many parts. Our public facing web site is
 The resources for the example deployed version of social-environment are all managed in AWS. The build server is a Ubuntu EC2 instance running Jenkins polling our source control management at github. The production application is a AWS linux flavored EC2 instance running the web application, serving the static content, and running the postgres database service. All of these EC2 instances are on a secluded Virtual Private Cloud with a configured Internet Gateway to allow open access to the internet. A Security Group is setup to firewall access from the public except through known ports and protocols.  
 
 
-Getting Started   
+Getting Started 
 ===
 Prerequisites
 ---
@@ -63,7 +63,7 @@ Prerequisites
  * pip
  * postgres
 
-Instriuctions
+Instructions
 ---
 
     $ git clone git@github.com:excellaco/social-environment.git
@@ -89,22 +89,3 @@ To generate a code coverage report, use the jenkins command. It will also run yo
 
 ##Deployment
 Excella used Jenkins as a Continuous Integration Server and established a delivery pipeline to build, test, and deploy to an Amazon Web Services (AWS) stack upon checkin to the Git repository.  *Need more detail here.  Ideally they can somehow recreate this deployment enviroment.*
-
-
-##Additional Reading
-*Do we need this section?*
-
-elasticsearch gis route
----
-http://blog.trifork.com/2013/08/01/server-side-clustering-of-geo-points-on-a-map-using-elasticsearch/
-https://www.elastic.co/blog/geo-location-and-search
-
-heroku postgres gis route
----
-https://devcenter.heroku.com/articles/heroku-postgres-extensions-postgis-full-text-search#postgis
-https://devcenter.heroku.com/articles/postgis
-https://github.com/cyberdelia/heroku-geo-buildpack/
-
-front end gis route
----
-https://github.com/turfjs/turf
