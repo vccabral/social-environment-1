@@ -61,6 +61,7 @@ Prerequisites
  * git
  * python 2.7
  * pip
+ * postgres
 
 Instriuctions
 ---
