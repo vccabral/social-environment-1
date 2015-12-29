@@ -64,6 +64,10 @@ body {
     overflow: hidden;
 }
 
+#quality_bar{
+    border: solid 3px gray;
+}
+
 /* Map Specific*/
 /*fonts*/
 
