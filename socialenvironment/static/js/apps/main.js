@@ -176,9 +176,9 @@
     var create_universe = function (universe_name, year) {
         if (!(year in marker_universe[universe_name])) {
             marker_universe[universe_name][year] = L.markerClusterGroup({
-                spiderfyOnMaxZoom: false,
+                spiderfyOnMaxZoom: true,
                 showCoverageOnHover: true,
-                zoomToBoundsOnClick: false
+                zoomToBoundsOnClick: true
             });
 
             marker_universe[universe_name][year].addTo(map);
