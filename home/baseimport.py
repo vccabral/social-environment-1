@@ -23,7 +23,7 @@ def create_air_quality_database(apps, schema_editor, year):
 
     max_insert_quantity = 10000
 
-    if year == 2013:
+    if year == 2013 and settings.DO_FULL_IMPORT:
         years_range = range(year, year+1)
     else:
         years_range = range(year, year)
