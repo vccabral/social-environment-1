@@ -78,6 +78,10 @@
     var marker_universe = {"air": {}, "toxic": {}, "quality": {}};
     var cirlce;
 
+    $( document ).ready(function() {
+        $("#sharebutton").removeClass("fb_iframe_widget");
+    });
+
     var load_from_url = function (url, render_method) {
         $.ajax(url).done(render_method);
     };

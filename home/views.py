@@ -228,6 +228,8 @@ class MapScoreAPIView(APIView):
             "grade": (8.0 - float(score['max_grade'][0])) / 7.0 * 100.0,
             "results": score['results'],
             "universe": "quality",
+            "score": score['max_grade'][0],
+            "score_title": score['max_grade'][1]
         })
         return response
 
