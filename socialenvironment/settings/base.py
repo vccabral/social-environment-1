@@ -51,6 +51,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',   
     'django_extensions', 
+    'django_jenkins',
+]
+
+PROJECT_APPS = [
+    'home',
 ]
 
 REST_FRAMEWORK = {
@@ -108,6 +113,8 @@ DATABASES = {
 }
 
 TEMP_DRIVE = "/tmp/"
+DO_FULL_IMPORT = os.environ.get("ON_JENKINS", "") == ""
+
 
 if "DATABASE_URL" in os.environ:
     # Honor the 'X-Forwarded-Proto' header for request.is_secure()

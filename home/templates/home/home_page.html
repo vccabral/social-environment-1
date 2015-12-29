@@ -31,40 +31,20 @@
 <style>
 html, body, #map {width: 100%;height: 95%;margin: 0;padding-top: 2%; padding-bottom: 2%; }
 #map {position: relative;}
+
+.leaflet-control-mapbox-geocoder-results a {width: 250px;}
+.leaflet-control-mapbox-geocoder-results a:hover {width: 250px;}
+.leaflet-control-mapbox-geocoder-wrap{
+	width: 250px;
+}
+
 </style>
 {% endblock %}
 
 {% block content %}
 
-<select id="year" class="form-control" style="position: absolute; z-index:1000; left: 50px; top:20px;">
-  <option value="1987">1987</option>
-  <option value="1988">1988</option>
-  <option value="1989">1989</option>
-  <option value="1990">1990</option>
-  <option value="1991">1991</option>
-  <option value="1992">1992</option>
-  <option value="1993">1993</option>
-  <option value="1994">1994</option>
-  <option value="1995">1995</option>
-  <option value="1996">1996</option>
-  <option value="1997">1997</option>
-  <option value="1998">1998</option>
-  <option value="1999">1999</option>
-  <option value="2000">2000</option>
-  <option value="2001">2001</option>
-  <option value="2002">2002</option>
-  <option value="2003">2003</option>
-  <option value="2005">2005</option>
-  <option value="2006">2006</option>
-  <option value="2007">2007</option>
-  <option value="2008">2008</option>
-  <option value="2009">2009</option>
-  <option value="2010">2010</option>
-  <option value="2011">2011</option>
-  <option value="2012">2012</option>
+<select id="year" class="form-control" style="visibility: hidden;position: absolute; z-index:1000; left: 50px; top:20px;">
   <option selected="selected" value="2013">2013</option>
-  <option value="2014">2014</option>
-  <option value="2015">2015</option>
 </select>
 
 
@@ -140,10 +120,10 @@ var get_marker = function(data_point){
 		parseFloat(data_point.latitude), 
 		parseFloat(data_point.longitude)
 	];
-	return L.marker(
+	marker = L.marker(
 		point,
-		{"title": data_point.title})
-	.bindPopup(data_point.title);
+		{"title": data_point.title}).bindPopup(data_point.title);
+	return marker;
 };
 
 var generate_render_method = function(historical_markers){
@@ -235,12 +215,13 @@ var load_markers_to_bounds = function(e){
 
 var initializeMap = function(position){
 	var center = [position.coords.latitude, position.coords.longitude]
-	map = L.map('map').setView(center, position.zoom || 13);
+	var zoom = position.zoom || 13;
+	map = L.map('map').setView(center, zoom);
 
 	L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ', {
 	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-	    minZoom: 10,
-	    maxZoom: 12,
+	    minZoom: 9,
+	    maxZoom: 13,
 	    id: '28903289137890890',
 	    accessToken: 'pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ'
 	}).addTo(map);
@@ -251,6 +232,7 @@ var initializeMap = function(position){
         autocomplete: true,
         keepOpen: true
     });
+
 	map.addControl(geocoder);
 	geocoder.on('select', function(event){
 		$(".leaflet-control-mapbox-geocoder-form").find("input").val(event.feature.place_name);
@@ -261,6 +243,9 @@ var initializeMap = function(position){
 
 	map.on('moveend', load_markers_to_bounds);
 	load_markers_to_bounds();
+	// setTimeout(function(){ 
+	// 	map.setZoom(z);
+	// }, 100);
 }
 
 $("#year").change(function(event){
@@ -298,7 +283,12 @@ if(location.hash.length>1){
 	initializeMap(initialPosition);
 }
 else if(navigator.geolocation){
-	navigator.geolocation.getCurrentPosition(initializeMap);
+	navigator.geolocation.getCurrentPosition(
+		initializeMap,
+		function(){
+			console.log("fallback");
+			initializeMap(initialPosition);
+		},{timeout:2500});
 }else{
 	initializeMap(initialPosition);
 }
