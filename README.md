@@ -16,14 +16,28 @@ This project will eventually be an open source project. Before that point, we wi
     $ ./manage.py runserver
 
 
-Design
+Design Approach
 ===
-Describe our tech solution approach.  E.g. django api tools, mapping tools, data source, etc.
+Given the short turnaround-time and proximity to planned holiday vacation, **Excella Consulting** put a small team together to and followed an agile development framework to build **Social-Environment** in an iterative, incremental manner. The cross-functional team, comprised of analysts, designers, and developers, began with Sprint 0, followed by three-day sprints. Not being co-located, and working on the project during off-hourse, the team used Slack to communicate and held conference calls every three days to ensure proper coordination.
+
+The team consisted of the following roles:
+
+* Product Manager
+* Technical Architect
+* User Researcher/Usability Tester
+* Visual Designer
+* Front-End Web Developers
+* Back-End Web Developers
+* DevOps Engineer
+* Business Analyst
+
+The self-organized team not only fulfilled their individual roles in the design and development process, but also helped where needed to deliver a quality product. The Product Manager led the effort with a focus on the value delivered by the final product, enabling the team to respond quickly to changing priorities and address feedback from usability testing. Utilizing **[GitHub issues](https://github.com/excellaco/social-environment/issues)**, the team created and groomed a backlog, discussed design decisions, and tracked bugs.
 
 
 API
 ===
 Describe the use and function of the API, including how to access it.
+The design began with creating an API to access the data.  The challenge was to create a function that, given a latitude and longitude, would return a series of datapoints within an arbitrary radius of that latitude and longitude.  Excella used a haversine function to do so.  Then, each datapoint is evaluated 
 
 
 Testing
