@@ -74,6 +74,8 @@ html, body, #map {width: 100%;height: 100%;margin: 0;padding: 0;}
 
 .radial-svg {
     display: block;
+    width: 125px;
+    height: 125px;
     margin: 0 auto;
 }
 
@@ -199,39 +201,39 @@ var get_marker = function(data_point){
 	];
 
 	var all_points = "";
-	// all_points = all_points + "<div>";
-	// if(data_point.results.length==0){
-	// 	all_points = "No available data.";
-	// }else{
-	// 	for(var key in data_point.results){
-	// 		all_points = all_points + data_point.results[key][2]+": "+data_point.results[key][1];
-	// 		if(key < data_point.results){
-	// 			all_points = all_points + "<br/>";
-	// 		}
-	// 	}
-	// }
-	// all_points = all_points +"</div>";
-	var content = "<div style='height:150px;'>"+data_point.title+"<div id='div2'></div></div>"+all_points;
-	var popup = L.popup()
-    .setLatLng(map.getCenter())
-    .setContent(content)
-    .openOn(map);
+	if("grade" in data_point){
+		var content = "<div style='height:150px;'>"+data_point.title+"<div id='div2'></div></div>"+all_points;
+		var popup = L.popup()
+	    .setLatLng(map.getCenter())
+	    .setContent(content)
+	    .openOn(map);
 
-	var div2=d3.select(document.getElementById('div2'));
-    var rp2 = radialProgress(document.getElementById('div2'))
-            .diameter(150)
-            .value(data_point.grade)
-            .render();
+		var div2=d3.select(document.getElementById('div2'));
+	    var rp2 = radialProgress(document.getElementById('div2'))
+	            .diameter(150)
+	            .value(data_point.grade)
+	            .render();
 
-    $(".arc").css({'fill': getColorForPercentage(data_point.grade)})
+	    $(".arc").css({'fill': getColorForPercentage(data_point.grade)})
+		marker = L.marker(
+			point,
+			{"title": data_point.title}
+		).bindPopup(popup).openPopup();
 
-	marker = L.marker(
-		point,
-		{"title": data_point.title}
-	).bindPopup(popup).openPopup();
+		return marker;
+	}else{
+		var content = data_point.title;
+		var popup = L.popup()
+	    .setLatLng(map.getCenter())
+	    .setContent(content);		
+		marker = L.marker(
+			point,
+			{"title": data_point.title}
+		).bindPopup(popup);
 
+		return marker;
+	}
 
-	return marker;
 };
 
 var generate_render_method = function(historical_markers){
@@ -281,7 +283,7 @@ var load_generic_quality_to_map = get_generic_load_method(
 
 var all_load_methods = [
 	// load_toxic_to_map, 
-	// load_air_quality_to_map,
+	load_air_quality_to_map,
 	load_generic_quality_to_map
 ];
 
@@ -328,8 +330,8 @@ var initializeMap = function(position){
 
 	L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ', {
 	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-	    minZoom: 9,
-	    maxZoom: 13,
+	    minZoom: 1,
+	    maxZoom: 20,
 	    id: '28903289137890890',
 	    accessToken: 'pk.eyJ1IjoidmNjYWJyYWwiLCJhIjoiY2lpNWZpMXV3MDFnaXR3a2Z4cWhtOHIzdCJ9.VrZvhWnHZmXBxdJf1XWitQ'
 	}).addTo(map);

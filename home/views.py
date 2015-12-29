@@ -11,82 +11,6 @@ import django_filters
 from math import radians, cos, sin, asin, sqrt
 
 
-### AIR QUALITY DATA ###
-class AirQualityDataPointSerializer(serializers.HyperlinkedModelSerializer):
-    latitude = serializers.CharField(source="Latitude", max_length=1000)
-    longitude = serializers.CharField(source="Longitude", max_length=1000)
-    title = serializers.SerializerMethodField()
-    year = serializers.CharField(source="Year", max_length=1000)
-    universe = serializers.SerializerMethodField()
-
-    def get_universe(self, obj):
-        return "air"
-
-    def get_title(self, obj):
-        return str(obj)
-
-    class Meta:
-        model = AirQualityDataPoint
-        fields = ["latitude", "longitude", "id", "title", "year", "universe"]
-
-
-class AirQualityDataPointFilter(django_filters.FilterSet):
-    min_latitude = django_filters.NumberFilter(name="Latitude", lookup_type='gte')
-    max_latitude = django_filters.NumberFilter(name="Latitude", lookup_type='lte')
-    min_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='gte')
-    max_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='lte')
-    year = django_filters.NumberFilter(name="Year")
-
-    class Meta:
-        model = AirQualityDataPoint
-        filter_fields = ('year','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
-
-class AirQualityDataPointViewSet(viewsets.ModelViewSet):
-    queryset = AirQualityDataPoint.objects.all()
-    serializer_class = AirQualityDataPointSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = AirQualityDataPointFilter
-
-
-
-### TOXIC DATA ###
-
-class ToxicDataPointSerializer(serializers.HyperlinkedModelSerializer):
-    latitude = serializers.CharField(source="LATITUDE", max_length=1000)
-    longitude = serializers.CharField(source="LONGITUDE", max_length=1000)
-    title = serializers.SerializerMethodField()
-    year = serializers.CharField(source="REPORTING_YEAR", max_length=1000)
-    universe = serializers.SerializerMethodField()
-
-    def get_universe(self, obj):
-        return "toxic"
-
-    def get_title(self, obj):
-        return str(obj)
-
-    class Meta:
-        model = ToxicDataPoint
-        fields = ["latitude", "longitude", "id", "title", "year", "universe"]
-
-class ToxicDataPointFilter(django_filters.FilterSet):
-    min_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='gte')
-    max_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='lte')
-    min_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='gte')
-    max_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='lte')
-    year = django_filters.NumberFilter(name="REPORTING_YEAR")
-
-    class Meta:
-        model = ToxicDataPoint
-        filter_fields = ('year','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
-
-
-class ToxicDataPointViewSet(viewsets.ModelViewSet):
-    queryset = ToxicDataPoint.objects.all()
-    serializer_class = ToxicDataPointSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = ToxicDataPointFilter
-
-#scoring API
 
 class MapScoreAPIView(APIView):
 
@@ -254,7 +178,8 @@ class MapScoreAPIView(APIView):
                     Latitude__lte = float(self.latitude) + self.radius / self.approx_degree_to_meter,
                     Longitude__gt = float(self.longitude) - self.radius / self.approx_degree_to_meter,
                     Longitude__lt = float(self.longitude) + self.radius / self.approx_degree_to_meter,
-                    Year  = self.year
+                    Year  = self.year,
+                    
                 ).values("Pollutant_Standard", "Arithmetic_Mean", "Latitude", "Longitude")
             )
 
@@ -302,6 +227,92 @@ class MapScoreAPIView(APIView):
             "universe": "quality",
         })
         return response
+
+
+
+### AIR QUALITY DATA ###
+class AirQualityDataPointSerializer(serializers.HyperlinkedModelSerializer):
+    latitude = serializers.CharField(source="Latitude", max_length=1000)
+    longitude = serializers.CharField(source="Longitude", max_length=1000)
+    title = serializers.SerializerMethodField()
+    year = serializers.CharField(source="Year", max_length=1000)
+    universe = serializers.SerializerMethodField()
+
+    def get_universe(self, obj):
+        return "air"
+
+    def get_title(self, obj):
+        return str(obj)
+
+    class Meta:
+        model = AirQualityDataPoint
+        fields = ["latitude", "longitude", "id", "title", "year", "universe"]
+
+
+class AirQualityDataPointFilter(django_filters.FilterSet):
+    min_latitude = django_filters.NumberFilter(name="Latitude", lookup_type='gte')
+    max_latitude = django_filters.NumberFilter(name="Latitude", lookup_type='lte')
+    min_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='gte')
+    max_longitude = django_filters.NumberFilter(name="Longitude", lookup_type='lte')
+    year = django_filters.NumberFilter(name="Year")
+
+    class Meta:
+        model = AirQualityDataPoint
+        filter_fields = ('year','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
+
+class AirQualityDataPointViewSet(viewsets.ModelViewSet):
+    queryset = AirQualityDataPoint.objects.all()
+    serializer_class = AirQualityDataPointSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = AirQualityDataPointFilter
+
+    def get_queryset(self):
+        m = MapScoreAPIView()
+        queryset = super(AirQualityDataPointViewSet, self).get_queryset().filter(Pollutant_Standard__in = m.standards.keys())
+        return queryset
+
+
+
+
+### TOXIC DATA ###
+
+class ToxicDataPointSerializer(serializers.HyperlinkedModelSerializer):
+    latitude = serializers.CharField(source="LATITUDE", max_length=1000)
+    longitude = serializers.CharField(source="LONGITUDE", max_length=1000)
+    title = serializers.SerializerMethodField()
+    year = serializers.CharField(source="REPORTING_YEAR", max_length=1000)
+    universe = serializers.SerializerMethodField()
+
+    def get_universe(self, obj):
+        return "toxic"
+
+    def get_title(self, obj):
+        return str(obj)
+
+    class Meta:
+        model = ToxicDataPoint
+        fields = ["latitude", "longitude", "id", "title", "year", "universe"]
+
+class ToxicDataPointFilter(django_filters.FilterSet):
+    min_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='gte')
+    max_latitude = django_filters.NumberFilter(name="LATITUDE", lookup_type='lte')
+    min_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='gte')
+    max_longitude = django_filters.NumberFilter(name="LONGITUDE", lookup_type='lte')
+    year = django_filters.NumberFilter(name="REPORTING_YEAR")
+
+    class Meta:
+        model = ToxicDataPoint
+        filter_fields = ('year','min_latitude', 'max_latitude','min_longitude', 'max_longitude')
+
+
+class ToxicDataPointViewSet(viewsets.ModelViewSet):
+    queryset = ToxicDataPoint.objects.all()
+    serializer_class = ToxicDataPointSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = ToxicDataPointFilter
+
+#scoring API
+
 
 
 
