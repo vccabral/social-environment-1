@@ -9,8 +9,11 @@ from rest_framework import status
 import itertools
 import django_filters
 from math import radians, cos, sin, asin, sqrt
+from django.shortcuts import render
 
 
+def full_map(request):
+    return render(request, 'map.html')
 
 class MapScoreAPIView(APIView):
 
@@ -225,6 +228,8 @@ class MapScoreAPIView(APIView):
             "grade": (8.0 - float(score['max_grade'][0])) / 7.0 * 100.0,
             "results": score['results'],
             "universe": "quality",
+            "score": score['max_grade'][0],
+            "score_title": score['max_grade'][1]
         })
         return response
 

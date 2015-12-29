@@ -68,6 +68,14 @@ Testing
 Running tests is simple with django
 
     $ ./manage.py test
+    
+Code Coverage
+===
+To generate a code coverage report, use the jenkins command. It will also run your tests. 
+
+    $ ./manage.py jenkins --enable-coverage
+    $ ls reports
+
 
 
 Deployment
