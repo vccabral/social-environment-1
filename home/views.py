@@ -222,7 +222,7 @@ class MapScoreAPIView(APIView):
         found_grades = filter(lambda grade: grade[0][0] <= localized_score < grade[0][1], grades)
 
         if found_grades:
-            return found_grades[0][1], found_grades[0][2], point['Pollutant_Standard']
+            return [found_grades[0][1], found_grades[0][2], point['Pollutant_Standard']]
         else: 
             return self.default_grade
 
@@ -262,7 +262,11 @@ class MapScoreAPIView(APIView):
         intersecting_quality_points = self.get_list_of_points()
 
         scores = [self.get_single_air_quality_score(point) for point in intersecting_quality_points]
-        return max(scores) if scores else self.default_grade
+        packaged_score = {
+            "max_grade": max(scores) if scores else self.default_grade,
+            "results": [self.get_single_air_quality_score(point) for point in intersecting_quality_points]
+        }
+        return packaged_score
 
     def get(self, request, *args, **kw):
         result = {
@@ -288,10 +292,13 @@ class MapScoreAPIView(APIView):
         self.year       = request.GET.get("year", 2012)
 
         score = self.get_total_air_quality_score()
+
         result["results"].append({
             "latitude": self.latitude,
             "longitude": self.longitude,
-            "title": "Air Quality Score: " + str(score[1]) + " based on " + score[2],
+            "title": "Air Quality Score: " + score['max_grade'][1],
+            "grade": (8.0 - float(score['max_grade'][0])) / 7.0 * 100.0,
+            "results": score['results'],
             "universe": "quality",
         })
         return response
