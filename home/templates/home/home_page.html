@@ -103,10 +103,7 @@
     </div>
 </div>
 
-<div class="fb-share-button" style="position: absolute; z-index:1000;left: 30px; bottom:20px;"
-
-     data-layout="button_count">
-</div>
+<div id="sharebutton" class="fb-share-button"></div>
 
 {% endblock %}
 
@@ -164,6 +161,10 @@
                             load_from_url(data.next, render_method);
                         }
                     });
+            $('#sharebutton').html('<fb:sharebutton class="fb-share-button"  href="' + window.location.href + '" style="position: absolute; z-index:1000;left: 30px; bottom:20px;" layout="button_count"/>');
+			if (typeof FB !== 'undefined') {
+    			FB.XFBML.parse(document.getElementById('sharebutton'));
+			}
         }
     };
     var percentColors = [
