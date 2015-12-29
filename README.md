@@ -54,8 +54,16 @@ The social-environment application has many parts. Our public facing web site is
 The resources for the example deployed version of social-environment are all managed in AWS. The build server is a Ubuntu EC2 instance running Jenkins polling our source control management at github. The production application is a AWS linux flavored EC2 instance running the web application, serving the static content, and running the postgres database service. All of these EC2 instances are on a secluded Virtual Private Cloud with a configured Internet Gateway to allow open access to the internet. A Security Group is setup to firewall access from the public except through known ports and protocols.  
 
 
-##Installing from Source
-This project will eventually be an open source project. Before that point, we will remove all the secrets in the repo and do a force push with a v0.1 commit history. Clone the repo to contribute
+Getting Started   
+===
+Prerequisites
+---
+ * git
+ * python 2.7
+ * pip
+
+Instriuctions
+---
 
     $ git clone git@github.com:excellaco/social-environment.git
     $ cd social-environment
