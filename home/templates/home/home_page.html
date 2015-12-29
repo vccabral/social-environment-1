@@ -59,16 +59,12 @@
                 dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
                 Aliquam in felis sit amet augue.</p>
 
-
-
             <hr>
-
-
 
             <table style="width:100%; height:20%">
                 <tr style="height: 100%">
                     <td>
-                        <div style="width:40px;height: 100%;border-style: solid;border-color: #66994e;background-color: #66994e; "/>
+                        <div id="quality_bar" style="width:40px;height: 100%;border-style: solid;"/>
                     </td>
                     <td style="padding-left: 10%">
                         <p>Air Quality Score</p>
@@ -122,6 +118,12 @@
                     </td>
                     <td>Harzardous</td>
                 </tr>
+                <tr>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #2f001c;background-color: #000000; "/>
+                    </td>
+                    <td>Very Harzardous</td>
+                </tr>
             </table>
         </div>
         <div class="col-xs-4"><!--map-canvas will be postioned here--></div>
@@ -151,6 +153,16 @@
     var exists_markers = {"air": [], "toxic": [], "quality": []};
     var marker_universe = {"air": {}, "toxic": {}, "quality": {}};
     var cirlce;
+
+    var quality_code = {
+      '1' : '#66994e',
+        '2': '#ffbe43',
+        '3': '#ff651b',
+        '4': '#850008',
+        '5': '#5f0022',
+        '6': '#2f001c',
+        '7': '#000000'
+    };
 
     var load_from_url = function (url, render_method) {
         $.ajax(url).done(render_method);
@@ -305,6 +317,10 @@
 
                 $('#score').html(data.results[0].grade + ' ' + data.results[0].score_title);
                 $('#lat_long').html('Latitude: ' + data.results[0].latitude + ' / Longitude: ' + data.results[0].longitude);
+
+                $('#quality_bar').css('border-color',quality_code[data.results[0].score]);
+                $('#quality_bar').css('background-color',quality_code[data.results[0].score]);
+
             },
             air_quality_url_from_bounds
     );
