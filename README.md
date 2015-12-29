@@ -33,19 +33,26 @@ Sprint 0
 
 Data
 ===
-The team chose
+The team chose the EPA Air Quality data as the source for the Social-Environment app.  The application contains code to download the EPA data from an EPA FTP site (in Excel format) and imports the data into a Postgres database for processing by the API.  Deploying the code that downloads the data can take a bit of time - up to an hour.
 
-API
+API Methods
 ===
-The design began with creating an API to access the data.  The challenge was to create a function that, given a latitude and longitude, would return a series of datapoints within an arbitrary radius of that latitude and longitude.  Excella used a haversine function to do so.  Then, each datapoint is evaluated to determine an air quality score.
+The design began with creating an API to access the air quality data.  The challenge was to create a function that, given a latitude and longitude, would return a series of datapoints within an arbitrary radius of that latitude and longitude.  Excella used a haversine function to do so.  Then, each datapoint is evaluated to determine an air quality score.
 
 
-### map_score
-The map_score service takes as parameters a latitude and longitude and returns json that contains the air quality score of the area bounded by a X mile radius around the given lat/lon.
+### v1 map_score
+GET `/api/v1/map_score/`
 
-`http://social-environment.com/api/v1/map_score/?latitude=38.06&longitude=-77.09`
+The map_score service takes as optional parameters a latitude, longitude, and year and returns the air quality score of the area bounded by a X mile radius around the specified lat/lon.  The score is determined by choosing the highest (most hazardous) score for any compound in the radius for the specified year.
 
+Example: `http://social-environment.com/api/v1/map_score/?latitude=38.06&longitude=-77.09&year=2013`
 
+### airquality
+GET `/api/v1/airquality`
+
+The airquality service takes as parameters a latitude, longitude, and year and returns a collection of air quality data points within an area bounded by a X mile radius around the specified latitude and longitude.
+
+Example: `http://social-environment.com/api/v1/airquality/?latitude=38.06&longitude=-77.09&year=2013`
 
 
 Testing
