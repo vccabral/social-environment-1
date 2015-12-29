@@ -9,8 +9,11 @@ from rest_framework import status
 import itertools
 import django_filters
 from math import radians, cos, sin, asin, sqrt
+from django.shortcuts import render
 
 
+def full_map(request):
+    return render(request, 'map.html')
 
 class MapScoreAPIView(APIView):
 
