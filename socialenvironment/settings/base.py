@@ -108,7 +108,7 @@ DATABASES = {
 }
 
 TEMP_DRIVE = "/tmp/"
-DO_FULL_IMPORT = os.environ("ON_JENKINS", "") == ""
+DO_FULL_IMPORT = os.environ.get("ON_JENKINS", "") == ""
 
 
 if "DATABASE_URL" in os.environ:
