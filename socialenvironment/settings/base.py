@@ -54,9 +54,9 @@ INSTALLED_APPS = [
     'django_jenkins',
 ]
 
-PROJECT_APPS = [
+PROJECT_APPS = (
     'home',
-]
+)
 
 REST_FRAMEWORK = {
     'PAGE_SIZE': 1000,
