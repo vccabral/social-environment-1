@@ -95,7 +95,7 @@ class MapScoreAPIView(APIView):
 
     standards = {
         "Ozone 1-hour Daily 2005": {
-        #Ozone unit is parts per million
+        #Ozone unit is stored as ppm, but we need to convert to ppb
             "func": lambda x: float(x)*1000,
             "grades": [
                 [[0, 124], 1, "Good"],
@@ -107,7 +107,7 @@ class MapScoreAPIView(APIView):
             ]
         },
         "Ozone 8-Hour 1997": {
-        #Ozone unit is parts per million
+        #Ozone unit is stored as ppm, but we need to convert to ppb
             "func": lambda x: float(x)*1000,
             "grades": [
                 [[0, 54], 1, "Good"],
@@ -118,8 +118,8 @@ class MapScoreAPIView(APIView):
             ]
         },
         "PM25 24-hour 2006": {
-        #PM25 unit is micrograms / cubic meter
-            "func": lambda x: float(x)*1000,
+        #PM25 unit is micrograms / cubic meter - no conversion needed
+            "func": lambda x: float(x),
             "grades": [
                 [[0, 12], 1, "Good"],
                 [[12.1, 35.4], 2, "Moderate"],
@@ -131,8 +131,8 @@ class MapScoreAPIView(APIView):
             ]
         },
         "PM25 24-hour 2013": {
-        #PM25 unit is micrograms / cubic meter
-            "func": lambda x: float(x)*1000,
+        #PM25 unit is micrograms / cubic meter - no conversion needed
+            "func": lambda x: float(x),
             "grades": [
                 [[0, 12], 1, "Good"],
                 [[12.1, 35.4], 2, "Moderate"],
@@ -144,8 +144,8 @@ class MapScoreAPIView(APIView):
             ]
         },
         "PM10 24-hour 2006": {
-        #PM25 unit is micrograms / cubic meter
-            "func": lambda x: float(x)*1000,
+        #PM25 unit is micrograms / cubic meter - no conversion needed
+            "func": lambda x: float(x),
             "grades": [
                 [[0, 54], 1, "Good"],
                 [[55, 154], 2, "Moderate"],
@@ -157,7 +157,7 @@ class MapScoreAPIView(APIView):
             ]
         },
         "CO 8-hour 1971": {
-        #CO unit is parts per million
+        #CO unit is stored as parts per million - no conversion needed
             "func": lambda x: float(x),
             "grades": [
                 [[0, 4.4], 1, "Good"],
@@ -170,7 +170,7 @@ class MapScoreAPIView(APIView):
             ]
         },
         "SO2 1-hour 2010": {
-        # SO unit is parts per billion
+        # SO unit is parts per billion - no conversion needed
             "func": lambda x: float(x),
             "grades": [
                 [[0, 35], 1, "Good"],
@@ -183,7 +183,7 @@ class MapScoreAPIView(APIView):
             ]
         },
         "SO2 24-hour 1971": {
-        # SO unit is parts per billion
+        # SO unit is parts per billion - no conversion needed
             "func": lambda x: float(x),
             "grades": [
                 [[0, 35], 1, "Good"],
@@ -196,7 +196,7 @@ class MapScoreAPIView(APIView):
             ]
         },
         "NO2 1-hour": {
-        # NO unit is parts per billion
+        # NO unit is parts per billion - no conversion needed
             "func": lambda x: float(x),
             "grades": [
                 [[0, 53], 1, "Good"],
