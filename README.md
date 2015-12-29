@@ -1,6 +1,11 @@
-Build Status
+Build
 ===
+
+Status
+---
 ![Build Status](http://build.social-environment.com/jenkins/buildStatus/icon?job=social-environment)
+Code Coverage
+---
 ![Code Coverage](http://build.social-environment.com/jenkins/job/social-environment/cobertura/graph)
 
 
