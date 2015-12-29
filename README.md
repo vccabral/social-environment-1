@@ -1,3 +1,7 @@
+Build Status
+===
+![Build Status](http://54.86.137.240/jenkins/buildStatus/icon?job=social-environment)
+
 # social-environment
 
 Social Environment is an application that allows visitors to check their local environmental score and share it with friends.  Given a location, visitors will see a local air quality score based on FDA air quality data and can drill down to see individiual contributing factors to the local air quality score.
