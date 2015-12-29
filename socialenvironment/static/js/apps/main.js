@@ -1,4 +1,10 @@
 
+
+
+    $( document ).ready(function() {
+        $(".fb-share-button").removeClass("fb_iframe_widget");
+    });
+    
     var map;
     var current_url = window.location.href;
     var arr = current_url.split("/");
