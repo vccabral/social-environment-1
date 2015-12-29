@@ -338,22 +338,21 @@ var initializeMap = function(position){
 
 	var geocoder = L.mapbox.geocoderControl('mapbox.places', {
         autocomplete: true,
-        keepOpen: true
+        keepOpen: false
     });
 
 	map.addControl(geocoder);
 	geocoder.on('select', function(event){
 		$(".leaflet-control-mapbox-geocoder-form").find("input").val(event.feature.place_name);
+		load_markers_to_bounds();
 	});
+
 
 	circle = L.circle(center, 3218.69); // two miles
 	circle.addTo(map);
 
 	map.on('dragend', load_markers_to_bounds);
 	load_markers_to_bounds();
-	// setTimeout(function(){ 
-	// 	map.setZoom(z);
-	// }, 100);
 }
 
 $("#year").change(function(event){
