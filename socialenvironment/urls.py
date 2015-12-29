@@ -6,7 +6,7 @@ from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 from home.models import RawDataMap, DataPoint, ToxicDataPoint, AirQualityDataPoint
-from home.views import router, MapScoreAPIView
+from home.views import router, MapScoreAPIView, full_map
 
 admin.site.register(RawDataMap)
 admin.site.register(DataPoint)
@@ -20,6 +20,8 @@ urlpatterns = [
     url(r'^documents/', include(wagtaildocs_urls)),
 
     url(r'^search/$', 'search.views.search', name='search'),
+
+    url(r'^map/$', 'home.views.full_map', name='map'),
 
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/map_score/$', MapScoreAPIView.as_view(), name='map_score'),

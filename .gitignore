@@ -9,3 +9,4 @@ socialenvironment/db.sqlite3-journal
 venv/
 tmp/
 socialenvironment/tmp
+.idea
