@@ -1,6 +1,8 @@
 Build Status
 ===
-![Build Status](http://54.86.137.240/jenkins/buildStatus/icon?job=social-environment)
+![Build Status](http://build.social-environment.com/jenkins/buildStatus/icon?job=social-environment)
+![Code Coverage](http://build.social-environment.com/jenkins/job/social-environment/cobertura/graph)
+
 
 # social-environment
 
