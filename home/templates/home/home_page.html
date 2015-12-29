@@ -54,49 +54,75 @@
             <a href="/map">Full Map</a>
             <img src="{% static 'images/logo.png' %}" style="max-width:100%;max-height:100%;"></img>
 
-
-            <h2 style="color:white">Air Quality Score</h2>
-            <hr>
-
-
-            <p style="color:white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam
-                sit amet vulputate.
+            <p style="font-size: 75%;">sit amet vulputate.
                 Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis
                 dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
                 Aliquam in felis sit amet augue.</p>
 
             <hr>
 
+            <table style="width:100%; height:20%">
+                <tr style="height: 100%">
+                    <td>
+                        <div id="quality_bar" style="width:40px;height: 100%;border-style: solid;"/>
+                    </td>
+                    <td style="padding-left: 10%">
+                        <p>Air Quality Score</p>
+                        <h1 id="score"></h1>
+                        <p id="lat_long" style="text-decoration: underline;"></p>
+                        <p style="font-size:80%">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis pharetra varius quam
+                            sit amet vulputate.
+                            Quisque mauris augue, molestie tincidunt condimentum vitae, gravida a libero. Aenean sit amet felis
+                            dolor, in sagittis nisi. Sed ac orci quis tortor imperdiet venenatis. Duis elementum auctor accumsan.
+                            Aliquam in felis sit amet augue.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+
             <table style="width:100%;">
                 <tr>
-                    <td><div style="width:40px; height: 12px;border-style: solid;border-color: #66994e;background-color: #66994e; "/></td>
-                    <td>0-50</td>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #66994e;background-color: #66994e; "/>
+                    </td>
                     <td>Good</td>
                 </tr>
                 <tr>
-                    <td><div style="width:40px; height: 12px;border-style: solid;border-color: #ffbe43;background-color: #ffbe43; "/></td>
-                    <td>52-100</td>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #ffbe43;background-color: #ffbe43; "/>
+                    </td>
                     <td>Moderate</td>
                 </tr>
                 <tr>
-                    <td><div style="width:40px; height: 12px;border-style: solid;border-color: #ff651b;background-color: #ff651b; "/></td>
-                    <td>101-150</td>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #ff651b;background-color: #ff651b; "/>
+                    </td>
                     <td>Unhealthy for Sensitive Groups</td>
                 </tr>
                 <tr>
-                    <td><div style="width:40px; height: 12px;border-style: solid;border-color: #850008;background-color: #850008; "/></td>
-                    <td>151-200</td>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #850008;background-color: #850008; "/>
+                    </td>
                     <td>Unhealthy</td>
                 </tr>
                 <tr>
-                    <td><div style="width:40px; height: 12px;border-style: solid;border-color: #5f0022;background-color: #5f0022; "/></td>
-                    <td>201-300</td>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #5f0022;background-color: #5f0022; "/>
+                    </td>
                     <td>Very Unhealthy</td>
                 </tr>
                 <tr>
-                    <td><div style="width:40px; height: 12px;border-style: solid;border-color: #2f001c;background-color: #2f001c; "/></td>
-                    <td>301-500</td>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #2f001c;background-color: #2f001c; "/>
+                    </td>
                     <td>Harzardous</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="width:40px; height: 12px;border-style: solid;border-color: #2f001c;background-color: #000000; "/>
+                    </td>
+                    <td>Very Harzardous</td>
                 </tr>
             </table>
         </div>
@@ -127,6 +153,16 @@
     var exists_markers = {"air": [], "toxic": [], "quality": []};
     var marker_universe = {"air": {}, "toxic": {}, "quality": {}};
     var cirlce;
+
+    var quality_code = {
+      '1' : '#66994e',
+        '2': '#ffbe43',
+        '3': '#ff651b',
+        '4': '#850008',
+        '5': '#5f0022',
+        '6': '#2f001c',
+        '7': '#000000'
+    };
 
     var load_from_url = function (url, render_method) {
         $.ajax(url).done(render_method);
@@ -164,9 +200,9 @@
                         }
                     });
             $('#sharebutton').html('<fb:sharebutton class="fb-share-button"  href="' + window.location.href + '" style="position: absolute; z-index:1000;left: 30px; bottom:20px;" layout="button_count"/>');
-			if (typeof FB !== 'undefined') {
-    			FB.XFBML.parse(document.getElementById('sharebutton'));
-			}
+            if (typeof FB !== 'undefined') {
+                FB.XFBML.parse(document.getElementById('sharebutton'));
+            }
         }
     };
     var percentColors = [
@@ -278,6 +314,13 @@
                 marker_universe[data.results[0].universe][year].clearLayers();
                 var marker = get_marker(data.results[0]);
                 marker_universe[data.results[0].universe][year].addLayer(marker);
+
+                $('#score').html(data.results[0].grade + ' ' + data.results[0].score_title);
+                $('#lat_long').html('Latitude: ' + data.results[0].latitude + ' / Longitude: ' + data.results[0].longitude);
+
+                $('#quality_bar').css('border-color',quality_code[data.results[0].score]);
+                $('#quality_bar').css('background-color',quality_code[data.results[0].score]);
+
             },
             air_quality_url_from_bounds
     );
