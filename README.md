@@ -71,17 +71,30 @@ Prerequisites
  * git
  * python 2.7
  * pip
- * postgres
+ * virtualenv
+ * libjpeg-dev
+   * Redhat: `yum install libjpeg-devel`
+   * Debian: `apt-get install libjpeg-dev`
+   * Mac with homebrew: `brew install libjpeg`)
+ * PostgreSQL server (optional for dev environment)
 
-Instructions
+Setting up a Dev Environment
 ---
 
-    $ git clone git@github.com:excellaco/social-environment.git
+The following steps will set up social-environment on a Unix-based operating system.
+
+    $ git clone https://github.com/excellaco/social-environment
     $ cd social-environment
+    
+    If setting up a dev environment and you want to use sqlite instead of postgres, comment out the psycopg2 line
+    in requirements.txt before continuing.
+    
     $ pip install -r requirements.txt
     $ export SECRET_KEY="1"
-    $ ./manage.py migrate
+    $ ./manage.py migrate # This will take several minutes
     $ ./manage.py runserver
+
+At this point you can access the site at http://localhost:8000/. If running inside a virtual machine, you'll want to run `./manage.py runserver 0.0.0.0:8000` so that the server accepts external traffic.
 
 
 ##Testing
