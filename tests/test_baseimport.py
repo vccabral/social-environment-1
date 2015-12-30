@@ -1,6 +1,6 @@
 import os.path
 import unittest
-from home.template.baseimports import encode_for_database
+from home.baseimport import encode_for_database
 import json
 
 from mock import patch
