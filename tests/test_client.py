@@ -33,3 +33,57 @@ class ClientTestCase(unittest.TestCase):
         self.assertIn('grade', results)
         self.assertEqual(results['grade'], 100.0)
         self.assertEqual(results['score'], 1)
+
+class ClientTestCaseModerate(unittest.TestCase):
+    """Test case for the client methods."""
+
+    def setUp(self):
+        self.client = ClientAPI()
+
+    def test_request(self):
+        """Test a simple request."""
+        lat = '39.58702374799314'
+        long = '-105.64092636108398'
+        year = '2013'
+
+        response = self.client.request(lat, long, year)
+        results = response['results'][0]
+        self.assertIn('grade', results)
+        self.assertEqual(results['grade'], 85.71428571428571)
+        self.assertEqual(results['score'], 2)
+
+class ClientTestCaseUnhealthyForSensitiveGroups(unittest.TestCase):
+    """Test case for the client methods."""
+
+    def setUp(self):
+        self.client = ClientAPI()
+
+    def test_request(self):
+        """Test a simple request."""
+        lat = '19.203853465539037'
+        long = '-155.48023223876953'
+        year = '2013'
+
+        response = self.client.request(lat, long, year)
+        results = response['results'][0]
+        self.assertIn('grade', results)
+        self.assertEqual(results['grade'], 71.42857142857143)
+        self.assertEqual(results['score'], 3)
+
+class ClientTestCaseVeryHazardous(unittest.TestCase):
+    """Test case for the client methods."""
+
+    def setUp(self):
+        self.client = ClientAPI()
+
+    def test_request(self):
+        """Test a simple request."""
+        lat = '32.49831211917791'
+        long = '-116.9765853881836'
+        year = '2013'
+
+        response = self.client.request(lat, long, year)
+        results = response['results'][0]
+        self.assertIn('grade', results)
+        self.assertEqual(results['grade'], 14.285714285714285)
+        self.assertEqual(results['score'], 7)
