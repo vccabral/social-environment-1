@@ -85,9 +85,13 @@ Instructions
 
 
 ##Testing
-Running tests is simple with django
+To execute the tests, run the server (if it's not already running)
 
-    $ ./manage.py test
+    $ python manage.py runserver
+
+Then in a separate terminal window, execute the tests
+
+	$ nosetests
     
 ###Code Coverage
 To generate a code coverage report, use the jenkins command. It will also run your tests. 
