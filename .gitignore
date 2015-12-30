@@ -1,5 +1,6 @@
 .DS_Store
 hiddenparams
+/static
 reports/
 .coverage
 db.sqlite3
