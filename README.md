@@ -17,12 +17,12 @@ For a given location, Social-Environment displays an Air Quality Score which use
 
 
 ##Design Approach
-**<a href="http://www.excella.com">Excella Consulting</a>** put a small team together and followed an agile development methodology to build **Social-Environment** in an iterative, incremental manner. The cross-functional team, comprised of analysts and developers, began with Sprint 0, followed by three-day sprints. Not being co-located, and working on the project during off-hours, the team used Slack to communicate and held conference calls every three days to ensure proper coordination.
+**<a href="http://www.excella.com">Excella Consulting</a>** put a small team together and followed an agile development methodology to build **Social-Environment** in an iterative, incremental manner. The cross-functional team, comprised of analysts and developers, began with a brainstorming session and defined an initial Minimum Viable Product (MVP). Not being co-located, and working on the project during off-hours, the team used Slack to communicate and held conference calls every three days to ensure proper coordination.
 
 The self-organized team not only fulfilled their individual roles in the design and development process, but also helped where needed to deliver a quality product. Utilizing **[GitHub issues](https://github.com/excellaco/social-environment/issues)**, the team created and groomed a Kanban backlog, discussed design decisions, and tracked bugs.
 
 
-##Sprint 0
+##Initial Concept
 The team met to brainstorm initial concepts after having reviewed available EPA datasets for consumption.  We landed on Air Quality and Toxic Release Inventory data, as we thought this data might provide an opportunity for an interesting visualization.
 
 We defined a <a href="https://github.com/excellaco/social-environment/wiki/User-Persona">user persona</a> for our prototypical user and developed it with this persona in mind.
