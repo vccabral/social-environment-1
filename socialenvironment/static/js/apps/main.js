@@ -153,7 +153,7 @@
                 marker_universe[data.results[0].universe][year].addLayer(marker);
 
                 $('#score').html(Math.round(data.results[0].grade*100)/100.0 + '% ' + data.results[0].score_title);
-                $('#lat_long').html('Latitude: ' + Math.round(data.results[0].latitude,-6) + ' / Longitude: ' + Math.round(data.results[0].longitude,6));
+                $('#lat_long').html('Latitude: ' + Math.round(data.results[0].latitude,-6) + ' / Longitude: ' + Math.round(data.results[0].longitude,-6));
                 $('#quality_bar').css('background-color',quality_code[data.results[0].score]);
 
             },
